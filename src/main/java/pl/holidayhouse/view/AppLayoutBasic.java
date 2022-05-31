@@ -1,5 +1,6 @@
 package pl.holidayhouse.view;
 
+import pl.holidayhouse.customer.CustomerListView;
 import pl.holidayhouse.employee.EmployeeListView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -34,8 +35,8 @@ public class AppLayoutBasic extends AppLayout {
         Tabs tabs = new Tabs();
         tabs.add(
                 createTab(VaadinIcon.DASHBOARD, "Dashboard"),
-                createTab(VaadinIcon.CART, "Orders"),
-                createTab(VaadinIcon.USER, "Pracownicy", EmployeeListView.class),
+                createTab(VaadinIcon.USER_HEART, "Klienci", CustomerListView.class),
+                createTab(VaadinIcon.USER_STAR, "Pracownicy", EmployeeListView.class),
                 createTab(VaadinIcon.PACKAGE, "Products"),
                 createTab(VaadinIcon.RECORDS, "Documents"),
                 createTab(VaadinIcon.LIST, "Tasks"),

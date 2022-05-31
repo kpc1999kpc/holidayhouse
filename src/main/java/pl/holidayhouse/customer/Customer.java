@@ -1,22 +1,21 @@
-package pl.holidayhouse.employee;
+package pl.holidayhouse.customer;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Entity
-@Table(name="employee")
+@Table(name="customer")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class Employee {
+public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long employee_id;
+    private long customer_id;
     @NonNull
     private String name;
     @NonNull
@@ -24,17 +23,16 @@ public class Employee {
     @NonNull
     private String id_card_number;
     @NonNull
-    private LocalDate employment_date;
-    @NonNull
     private String phone_number;
     @NonNull
     private String email;
     @NonNull
     private String address;
     @NonNull
-    private String account_number;
-    @NonNull
-    private String employment_status;
+    private String nationality;
     @NonNull
     private String comment;
 }
+
+
+

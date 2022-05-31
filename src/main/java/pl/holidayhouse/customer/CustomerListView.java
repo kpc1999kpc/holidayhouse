@@ -1,6 +1,5 @@
-package pl.holidayhouse.employee;
+package pl.holidayhouse.customer;
 
-import pl.holidayhouse.view.AppLayoutBasic;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -12,17 +11,19 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-@PageTitle("Pracownicy | Holiday House")
-@Route(value = "/pracownicy", layout = AppLayoutBasic.class)
-public class EmployeeListView extends VerticalLayout {
-    private EmployeeForm form;
-    Grid<Employee> grid = new Grid<>(Employee.class);
-    TextField filterText = new TextField();
-    EmployeeService employeeService;
+import pl.holidayhouse.view.AppLayoutBasic;
 
-    public EmployeeListView(EmployeeService employeeService) {
-        this.employeeService = employeeService;
-        addClassName("employees-list-view");
+@PageTitle("Klienci | Holiday House")
+@Route(value = "/klienci", layout = AppLayoutBasic.class)
+public class CustomerListView extends VerticalLayout {
+    private CustomerForm form;
+    Grid<Customer> grid = new Grid<>(Customer.class);
+    TextField filterText = new TextField();
+    CustomerService customerService;
+
+    public CustomerListView(CustomerService customerService) {
+        this.customerService = customerService;
+        addClassName("customers-list-view");
         setSizeFull();
 
         configureGrid();
@@ -37,7 +38,7 @@ public class EmployeeListView extends VerticalLayout {
     }
 
     private void closeEditor() {
-        form.setEmployee(null);
+        form.setCustomer(null);
         form.setVisible(false);
         removeClassName("editing");
     }
@@ -52,21 +53,21 @@ public class EmployeeListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        form = new EmployeeForm();
+        form = new CustomerForm();
         form.setWidth("25em");
-        form.addListener(EmployeeForm.SaveEvent.class, this::saveEmployee);
-        form.addListener(EmployeeForm.DeleteEvent.class, this::deleteEmployee);
-        form.addListener(EmployeeForm.CloseEvent.class, e -> closeEditor());
+        form.addListener(CustomerForm.SaveEvent.class, this::saveCustomer);
+        form.addListener(CustomerForm.DeleteEvent.class, this::deleteCustomer);
+        form.addListener(CustomerForm.CloseEvent.class, e -> closeEditor());
     }
 
-    private void deleteEmployee(EmployeeForm.DeleteEvent event) {
-        employeeService.delete(event.getEmployee());
+    private void deleteCustomer(CustomerForm.DeleteEvent event) {
+        customerService.delete(event.getCustomer());
         updateList();
         closeEditor();
     }
 
-    private void saveEmployee(EmployeeForm.SaveEvent event){
-        employeeService.save(event.getEmployee());
+    private void saveCustomer(CustomerForm.SaveEvent event){
+        customerService.save(event.getCustomer());
         updateList();
         closeEditor();
     }
@@ -76,45 +77,45 @@ public class EmployeeListView extends VerticalLayout {
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
-        Button addEmployeeButton = new Button("Dodaj pracownika", new Icon(VaadinIcon.PLUS));
-        addEmployeeButton.addClickListener(e -> addEmployee());
+        Button addCustomerButton = new Button("Dodaj klienta", new Icon(VaadinIcon.PLUS));
+        addCustomerButton.addClickListener(e -> addCustomer());
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterText, addEmployeeButton);
+        HorizontalLayout toolbar = new HorizontalLayout(filterText, addCustomerButton);
         toolbar.addClassName("toolbar");
         return toolbar;
     }
 
-    private void addEmployee() {
+    private void addCustomer() {
         grid.asSingleSelect().clear();
-        editEmployee(new Employee());
+        editCustomer(new Customer());
     }
 
     private void updateList() {
-        grid.setItems(employeeService.findAll(filterText.getValue()));
+        grid.setItems(customerService.findAll(filterText.getValue()));
     }
     private void configureGrid() {
-        grid.addClassName("employee-grid");
+        grid.addClassName("customer-grid");
         grid.setSizeFull();
 
-        grid.setColumns("name", "surname", "id_card_number", "employment_date", "phone_number", "email", "address");
+        grid.setColumns("name", "surname", "id_card_number", "phone_number", "email", "address", "nationality");
         grid.getColumnByKey("name").setHeader("Imię");
         grid.getColumnByKey("surname").setHeader("Nazwisko");
         grid.getColumnByKey("id_card_number").setHeader("Numer dowodu");
-        grid.getColumnByKey("employment_date").setHeader("Data zatrudnienia");
         grid.getColumnByKey("phone_number").setHeader("Telefon");
         grid.getColumnByKey("email").setHeader("Email");
         grid.getColumnByKey("address").setHeader("Adres");
+        grid.getColumnByKey("nationality").setHeader("Narodowość");
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
-        grid.asSingleSelect().addValueChangeListener(e -> editEmployee(e.getValue()));
+        grid.asSingleSelect().addValueChangeListener(e -> editCustomer(e.getValue()));
     }
 
-    private void editEmployee(Employee employee) {
-        if(employee == null){
+    private void editCustomer(Customer customer) {
+        if(customer == null){
             closeEditor();
         } else {
-            form.setEmployee(employee);
+            form.setCustomer(customer);
             form.setVisible(true);
             addClassName("editing");
         }
