@@ -1,4 +1,5 @@
-package pl.holidayhouse.customer;
+package pl.holidayhouse.house;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -7,55 +8,46 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.shared.Registration;
 
-public class CustomerForm extends FormLayout {
-    Binder<Customer> binder = new BeanValidationBinder<>(Customer.class);
-    TextField name = new TextField("Imię");
-    TextField surname = new TextField("Nazwisko");
-    TextField id_card_number = new TextField("Numer dowodu");
-    EmailField email = new EmailField("Email");
-    TextField phone_number = new TextField("Telefon");
-    TextField address = new TextField("Adres");
-    TextField nationality = new TextField("Narodowość");
-
+public class HouseForm extends FormLayout {
+    Binder<House> binder = new BeanValidationBinder<>(House.class);
+    TextField house_id = new TextField("Numer");
+    TextField status = new TextField("Status");
     TextField comment = new TextField("Komentarz");
 
     Button save = new Button("Zapisz");
     Button delete = new Button("Usuń");
     Button cancel = new Button("Anuluj");
-    private Customer customer;
+    private House house;
 
-    public CustomerForm(){
-        addClassName("customer-form");
+    public HouseForm(){
+        addClassName("house-form");
+
+        addClassName("reservation-form");
+        binder.forField(house_id)
+                .withNullRepresentation("")
+                .withConverter( new StringToLongConverter("house_id")).bind("house_id");
+        house_id.setEnabled(false);
+
         binder.bindInstanceFields(this);
         Component buttonsLayout = createButtonsLayout();
         add(
-            name,
-            surname,
-            email,
-            phone_number,
-            id_card_number,
-            address,
-            nationality,
+            house_id,
+            status,
+            comment,
             buttonsLayout
         );
-
-        setResponsiveSteps(new ResponsiveStep("0", 2));
-
-        setColspan(buttonsLayout, 2);
-        setColspan(email, 2);
-        setColspan(address, 2);
     }
 
-    public void setCustomer(Customer customer){
-        this.customer = customer;
-        binder.readBean(customer);
+    public void setHouse(House house){
+        this.house = house;
+        binder.readBean(house);
     }
     private Component createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -63,7 +55,7 @@ public class CustomerForm extends FormLayout {
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
         save.addClickListener(event -> validateAndSave());
-        delete.addClickListener(event -> fireEvent(new DeleteEvent(this, customer)));
+        delete.addClickListener(event -> fireEvent(new DeleteEvent(this, house)));
         cancel.addClickListener(event -> fireEvent(new CloseEvent(this)));
 
         save.addClickShortcut(Key.ENTER);
@@ -74,41 +66,41 @@ public class CustomerForm extends FormLayout {
 
     private void validateAndSave() {
         try{
-            binder.writeBean(customer);
-            fireEvent(new SaveEvent(this, customer));
+            binder.writeBean(house);
+            fireEvent(new SaveEvent(this, house));
         } catch (ValidationException e) {
             e.printStackTrace();
         }
     }
 
-    public static abstract class CustomerFormEvent extends ComponentEvent<CustomerForm> {
-        private Customer customer;
+    public static abstract class HouseFormEvent extends ComponentEvent<HouseForm> {
+        private House house;
 
-        protected CustomerFormEvent(CustomerForm source, Customer customer) {
+        protected HouseFormEvent(HouseForm source, House house) {
             super(source, false);
-            this.customer = customer;
+            this.house = house;
         }
 
-        public Customer getCustomer() {
-            return customer;
-        }
-    }
-
-    public static class SaveEvent extends CustomerFormEvent {
-        SaveEvent(CustomerForm source, Customer customer) {
-            super(source, customer);
+        public House getHouse() {
+            return house;
         }
     }
 
-    public static class DeleteEvent extends CustomerFormEvent {
-        DeleteEvent(CustomerForm source, Customer customer) {
-            super(source, customer);
+    public static class SaveEvent extends HouseFormEvent {
+        SaveEvent(HouseForm source, House house) {
+            super(source, house);
+        }
+    }
+
+    public static class DeleteEvent extends HouseFormEvent {
+        DeleteEvent(HouseForm source, House house) {
+            super(source, house);
         }
 
     }
 
-    public static class CloseEvent extends CustomerFormEvent {
-        CloseEvent(CustomerForm source) {
+    public static class CloseEvent extends HouseFormEvent {
+        CloseEvent(HouseForm source) {
             super(source, null);
         }
     }

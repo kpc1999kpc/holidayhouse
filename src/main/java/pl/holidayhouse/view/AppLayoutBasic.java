@@ -12,6 +12,11 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import pl.holidayhouse.house.HouseListView;
+import pl.holidayhouse.payment.PaymentListView;
+import pl.holidayhouse.reservation.ReservationListView;
+import pl.holidayhouse.salary.SalaryForm;
+import pl.holidayhouse.salary.SalaryListView;
 
 @Route("app-layout-basic")
 public class AppLayoutBasic extends AppLayout {
@@ -34,13 +39,12 @@ public class AppLayoutBasic extends AppLayout {
     private Tabs getTabs() {
         Tabs tabs = new Tabs();
         tabs.add(
-                createTab(VaadinIcon.DASHBOARD, "Dashboard"),
+                createTab(VaadinIcon.CALENDAR, "Rezerwacje", ReservationListView.class),
+                createTab(VaadinIcon.MONEY_DEPOSIT, "Płatności", PaymentListView.class),
                 createTab(VaadinIcon.USER_HEART, "Klienci", CustomerListView.class),
                 createTab(VaadinIcon.USER_STAR, "Pracownicy", EmployeeListView.class),
-                createTab(VaadinIcon.PACKAGE, "Products"),
-                createTab(VaadinIcon.RECORDS, "Documents"),
-                createTab(VaadinIcon.LIST, "Tasks"),
-                createTab(VaadinIcon.CHART, "Analytics")
+                createTab(VaadinIcon.MONEY_WITHDRAW, "Wypłaty", SalaryListView.class),
+                createTab(VaadinIcon.HOME, "Domki", HouseListView.class)
         );
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         return tabs;

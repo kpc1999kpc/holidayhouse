@@ -56,6 +56,7 @@ public class EmployeeForm extends FormLayout {
         setColspan(address, 2);
         setColspan(account_number, 2);
 
+
     }
 
     public void setEmployee(Employee employee){
@@ -73,6 +74,7 @@ public class EmployeeForm extends FormLayout {
 
         save.addClickShortcut(Key.ENTER);
         cancel.addClickShortcut(Key.ESCAPE);
+        delete.addClickShortcut(Key.DELETE);
         return new HorizontalLayout(save, delete, cancel);
     }
 
