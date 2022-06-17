@@ -5,6 +5,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pl.holidayhouse.employee.Employee;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -15,4 +16,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "OR LOWER(u.comment) LIKE %:searchTerm%",
             nativeQuery = true)
     List<Reservation> search(@Param("searchTerm") String searchTerm);
+
+    @Query(value = "SELECT u.house_id FROM reservation u " +
+            "WHERE :check_in BETWEEN u.check_in and u.check_out AND " +
+            "WHERE :check_out BETWEEN u.check_in and u.check_out",
+            nativeQuery = true)
+    int[] checkAvailability(@Param("check_in") LocalDate check_in, @Param("check_out") LocalDate check_out);
 }

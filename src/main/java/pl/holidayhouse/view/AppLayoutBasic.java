@@ -1,7 +1,5 @@
 package pl.holidayhouse.view;
 
-import pl.holidayhouse.customer.CustomerListView;
-import pl.holidayhouse.employee.EmployeeListView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.html.H1;
@@ -12,13 +10,14 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import pl.holidayhouse.customer.CustomerListView;
+import pl.holidayhouse.employee.EmployeeListView;
 import pl.holidayhouse.house.HouseListView;
 import pl.holidayhouse.payment.PaymentListView;
 import pl.holidayhouse.reservation.ReservationListView;
-import pl.holidayhouse.salary.SalaryForm;
 import pl.holidayhouse.salary.SalaryListView;
 
-@Route("app-layout-basic")
+@Route("")
 public class AppLayoutBasic extends AppLayout {
 
     public AppLayoutBasic() {

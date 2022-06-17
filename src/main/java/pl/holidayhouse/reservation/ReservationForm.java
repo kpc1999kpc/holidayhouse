@@ -26,6 +26,8 @@ import pl.holidayhouse.house.House;
 import java.util.List;
 
 public class ReservationForm extends FormLayout {
+    ReservationService reservationService;
+
     Binder<Reservation> binder = new BeanValidationBinder<>(Reservation.class);
     TextField reservation_id = new TextField("Numer");
     IntegerField guests_number = new IntegerField("Liczba gości");
@@ -47,6 +49,10 @@ public class ReservationForm extends FormLayout {
     public ReservationForm(List<Employee> employees, List<Customer> customers, List<House> houses){
         addClassName("reservation-form");
 
+        check_in.addValueChangeListener(e -> check_out.setMin(e.getValue()));
+        check_out.addValueChangeListener(e -> check_in.setMax(e.getValue()));
+
+
         employee.setItems(employees);
         employee.setItemLabelGenerator(e-> e.getName() + " " + e.getSurname());
 
@@ -55,7 +61,15 @@ public class ReservationForm extends FormLayout {
 
         house.setItems(houses);
         house.setItemLabelGenerator(e-> String.valueOf(e.getHouse_id()));
-
+        /*
+        binder.forField(check_in)
+                .withValidator(localDate -> {
+                    int freeHouses = reservationService.booked(localDate);
+                    boolean validWeekDay = freeHouses >= 1 && freeHouses <= 3;
+                    return validWeekDay;
+                }, "Ten termin jest zajęty")
+                .bind(Reservation::getCheck_in, Reservation::setCheck_in);
+        */
         binder.forField(reservation_id)
                 .withNullRepresentation("")
                 .withConverter( new StringToLongConverter("reservation_id")).bind("reservation_id");
@@ -74,8 +88,8 @@ public class ReservationForm extends FormLayout {
         guests_number.setMin(0);
         guests_number.setMax(6);
 
-        check_in.addValueChangeListener(e -> check_out.setMin(e.getValue()));
-        check_out.addValueChangeListener(e -> check_in.setMax(e.getValue()));
+
+
 
         add(
             reservation_id,

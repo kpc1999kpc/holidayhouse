@@ -2,6 +2,7 @@ package pl.holidayhouse.reservation;
 
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -38,5 +39,9 @@ public class ReservationService {
 
     public void delete(Reservation reservation) {
         reservationRepository.delete(reservation);
+    }
+
+    public int[] booked(LocalDate checkIn, LocalDate check_out) {
+        return reservationRepository.checkAvailability(checkIn, check_out);
     }
 }
