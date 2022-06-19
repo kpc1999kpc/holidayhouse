@@ -61,6 +61,10 @@ public class ReservationForm extends FormLayout {
 
         house.setItems(houses);
         house.setItemLabelGenerator(e-> String.valueOf(e.getHouse_id()));
+
+        check_in.addValueChangeListener(e -> updateHouse());
+        check_out.addValueChangeListener(e -> updateHouse());
+
         /*
         binder.forField(check_in)
                 .withValidator(localDate -> {
@@ -115,6 +119,12 @@ public class ReservationForm extends FormLayout {
         this.reservation = reservation;
         binder.readBean(reservation);
     }
+
+    private void updateHouse() {
+        house.setItems(reservationService.checkAvailability(check_in.getValue(), check_in.getValue()));
+        house.setItemLabelGenerator(e-> String.valueOf(e.getHouse_id()));
+    }
+
     private Component createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
