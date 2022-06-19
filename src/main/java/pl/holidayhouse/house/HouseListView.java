@@ -13,7 +13,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import pl.holidayhouse.view.AppLayoutBasic;
 
-@PageTitle("Domki | Holiday House")
+@PageTitle("Domki | Summer Holidays")
 @Route(value = "/domki", layout = AppLayoutBasic.class)
 public class HouseListView extends VerticalLayout {
     private HouseForm form;

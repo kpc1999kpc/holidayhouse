@@ -14,7 +14,7 @@ import org.vaadin.artur.helpers.LaunchUtil;
 @SpringBootApplication
 @NpmPackage(value = "lumo-css-framework", version = "^4.0.10")
 @Theme("flowcrmtutorial")
-@PWA(name = "Holiday House", shortName = "HoliHouse", offlinePath="offline.html", offlineResources = { "./images/offline.png"})
+@PWA(name = "Summer Holidays", shortName = "Summer Holidays", offlinePath="offline.html", offlineResources = { "./images/offline.png"})
 public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {

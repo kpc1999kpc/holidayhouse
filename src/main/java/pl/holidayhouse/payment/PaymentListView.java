@@ -3,6 +3,7 @@ package pl.holidayhouse.payment;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -14,7 +15,7 @@ import com.vaadin.flow.router.Route;
 import pl.holidayhouse.reservation.ReservationService;
 import pl.holidayhouse.view.AppLayoutBasic;
 
-@PageTitle("Domki | Holiday House")
+@PageTitle("Płatności | Summer Holidays")
 @Route(value = "/platnosci", layout = AppLayoutBasic.class)
 public class PaymentListView extends VerticalLayout {
     private PaymentForm form;
@@ -83,8 +84,12 @@ public class PaymentListView extends VerticalLayout {
         filterText.addValueChangeListener(e -> updateList());
         Button addPaymentButton = new Button("Dodaj płatność", new Icon(VaadinIcon.PLUS));
         addPaymentButton.addClickListener(e -> addPayment());
+        H1 total = new H1("Łącznie: "+paymentService.total());
+        total.getStyle()
+                .set("font-size", "var(--lumo-font-size-l)")
+                .set("margin", "0");
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterText, addPaymentButton);
+        HorizontalLayout toolbar = new HorizontalLayout(filterText, addPaymentButton, total);
         toolbar.addClassName("toolbar");
         return toolbar;
     }

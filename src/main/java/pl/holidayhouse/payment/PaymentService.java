@@ -2,6 +2,7 @@ package pl.holidayhouse.payment;
 
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -30,6 +31,10 @@ public class PaymentService {
         } else {
             return paymentRepository.search(filterText);
         }
+    }
+
+    public BigDecimal total() {
+            return paymentRepository.total();
     }
 
     public long count() {

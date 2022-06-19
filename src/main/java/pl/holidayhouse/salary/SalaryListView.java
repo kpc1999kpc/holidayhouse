@@ -14,7 +14,7 @@ import com.vaadin.flow.router.Route;
 import pl.holidayhouse.employee.EmployeeService;
 import pl.holidayhouse.view.AppLayoutBasic;
 
-@PageTitle("Rezerwacje | Holiday House")
+@PageTitle("Wypłaty | Summer Holidays")
 @Route(value = "/wyplaty", layout = AppLayoutBasic.class)
 public class SalaryListView extends VerticalLayout {
     private SalaryForm form;

@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pl.holidayhouse.house.House;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -17,4 +18,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             "OR LOWER(u.comment) LIKE %:searchTerm%",
             nativeQuery = true)
     List<Payment> search(@Param("searchTerm") String searchTerm);
+
+    @Query(value = "SELECT SUM(amount) FROM payment",
+            nativeQuery = true)
+    BigDecimal total();
 }

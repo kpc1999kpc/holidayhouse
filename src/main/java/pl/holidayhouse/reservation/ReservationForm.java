@@ -26,7 +26,7 @@ import pl.holidayhouse.house.House;
 import java.util.List;
 
 public class ReservationForm extends FormLayout {
-    ReservationService reservationService;
+
 
     Binder<Reservation> binder = new BeanValidationBinder<>(Reservation.class);
     TextField reservation_id = new TextField("Numer");
@@ -62,6 +62,10 @@ public class ReservationForm extends FormLayout {
         house.setItems(houses);
         house.setItemLabelGenerator(e-> String.valueOf(e.getHouse_id()));
         /*
+        check_in.addValueChangeListener(e -> updateHouse());
+        check_out.addValueChangeListener(e -> updateHouse());
+
+
         binder.forField(check_in)
                 .withValidator(localDate -> {
                     int freeHouses = reservationService.booked(localDate);
@@ -89,8 +93,6 @@ public class ReservationForm extends FormLayout {
         guests_number.setMax(6);
 
 
-
-
         add(
             reservation_id,
             guests_number,
@@ -115,6 +117,12 @@ public class ReservationForm extends FormLayout {
         this.reservation = reservation;
         binder.readBean(reservation);
     }
+    /*
+    private void updateHouse() {
+        house.setItems(reservationService.checkAvailability(check_in.getValue(), check_in.getValue()));
+        house.setItemLabelGenerator(e-> String.valueOf(e.getHouse_id()));
+    }*/
+
     private Component createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);

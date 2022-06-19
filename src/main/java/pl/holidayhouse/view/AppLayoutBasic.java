@@ -23,7 +23,7 @@ public class AppLayoutBasic extends AppLayout {
     public AppLayoutBasic() {
         DrawerToggle toggle = new DrawerToggle();
 
-        H1 title = new H1("Holiday House");
+        H1 title = new H1("Summer Holidays");
         title.getStyle()
                 .set("font-size", "var(--lumo-font-size-l)")
                 .set("margin", "0");

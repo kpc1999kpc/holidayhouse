@@ -18,7 +18,7 @@ import pl.holidayhouse.view.AppLayoutBasic;
 
 import java.util.Collections;
 
-@PageTitle("Rezerwacje | Holiday House")
+@PageTitle("Rezerwacje | Summer Holidays")
 @Route(value = "/rezerwacje", layout = AppLayoutBasic.class)
 public class ReservationListView extends VerticalLayout {
     private ReservationForm form;

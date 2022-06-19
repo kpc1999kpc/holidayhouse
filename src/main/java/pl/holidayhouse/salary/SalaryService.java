@@ -1,10 +1,10 @@
 package pl.holidayhouse.salary;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Controller
+@Service
 public class SalaryService {
     private final SalaryRepository salaryRepository;
 

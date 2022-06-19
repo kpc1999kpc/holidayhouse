@@ -13,7 +13,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import pl.holidayhouse.view.AppLayoutBasic;
 
-@PageTitle("Klienci | Holiday House")
+@PageTitle("Klienci | Summer Holidays")
 @Route(value = "/klienci", layout = AppLayoutBasic.class)
 public class CustomerListView extends VerticalLayout {
     private CustomerForm form;
@@ -97,14 +97,15 @@ public class CustomerListView extends VerticalLayout {
         grid.addClassName("customer-grid");
         grid.setSizeFull();
 
-        grid.setColumns("name", "surname", "id_card_number", "phone_number", "email", "address", "nationality");
+        grid.setColumns("name", "surname", "id_card_number", "phone_number", "email", "comment");
         grid.getColumnByKey("name").setHeader("Imię");
         grid.getColumnByKey("surname").setHeader("Nazwisko");
         grid.getColumnByKey("id_card_number").setHeader("Numer dowodu");
         grid.getColumnByKey("phone_number").setHeader("Telefon");
         grid.getColumnByKey("email").setHeader("Email");
-        grid.getColumnByKey("address").setHeader("Adres");
-        grid.getColumnByKey("nationality").setHeader("Narodowość");
+        //grid.getColumnByKey("address").setHeader("Adres");
+        //grid.getColumnByKey("nationality").setHeader("Narodowość");
+        grid.getColumnByKey("comment").setHeader("Komentarz");
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 

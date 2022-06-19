@@ -21,9 +21,8 @@ public class CustomerForm extends FormLayout {
     TextField id_card_number = new TextField("Numer dowodu");
     EmailField email = new EmailField("Email");
     TextField phone_number = new TextField("Telefon");
-    TextField address = new TextField("Adres");
-    TextField nationality = new TextField("Narodowość");
-
+    //TextField address = new TextField("Adres");
+    //TextField nationality = new TextField("Narodowość");
     TextField comment = new TextField("Komentarz");
 
     Button save = new Button("Zapisz");
@@ -41,8 +40,9 @@ public class CustomerForm extends FormLayout {
             email,
             phone_number,
             id_card_number,
-            address,
-            nationality,
+            //address,
+            //nationality,
+            comment,
             buttonsLayout
         );
 
@@ -50,7 +50,8 @@ public class CustomerForm extends FormLayout {
 
         setColspan(buttonsLayout, 2);
         setColspan(email, 2);
-        setColspan(address, 2);
+        //setColspan(address, 2);
+        setColspan(comment, 2);
     }
 
     public void setCustomer(Customer customer){
