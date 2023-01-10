@@ -6,22 +6,17 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.BigDecimalField;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.shared.Registration;
-import pl.holidayhouse.employee.Employee;
-
-import java.util.List;
 
 public class SalaryForm extends FormLayout {
     Binder<Salary> binder = new BeanValidationBinder<>(Salary.class);
@@ -29,16 +24,13 @@ public class SalaryForm extends FormLayout {
     BigDecimalField amount = new BigDecimalField("Kwota");
     DatePicker salary_date = new DatePicker("Data wypłaty");
     TextField comment = new TextField("Komentarz");
-    ComboBox<Employee> employee = new ComboBox<>("Pracownik");
 
     Button save = new Button("Zapisz");
     Button delete = new Button("Usuń");
     Button cancel = new Button("Anuluj");
     private Salary salary;
 
-    public SalaryForm(List<Employee> employees){
-        employee.setItems(employees);
-        employee.setItemLabelGenerator(e-> e.getName() + " " + e.getSurname());
+    public SalaryForm(){
 
         addClassName("salary-form");
         binder.forField(salary_id)
@@ -56,7 +48,6 @@ public class SalaryForm extends FormLayout {
 
         add(
             salary_id,
-            employee,
             amount,
             salary_date,
             comment,

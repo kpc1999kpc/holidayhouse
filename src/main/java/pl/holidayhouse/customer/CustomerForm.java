@@ -18,9 +18,9 @@ public class CustomerForm extends FormLayout {
     Binder<Customer> binder = new BeanValidationBinder<>(Customer.class);
     TextField name = new TextField("Imię");
     TextField surname = new TextField("Nazwisko");
-    TextField id_card_number = new TextField("Numer dowodu");
-    EmailField email = new EmailField("Email");
+    //TextField id_card_number = new TextField("Numer dowodu");
     TextField phone_number = new TextField("Telefon");
+    EmailField email = new EmailField("Email");
     //TextField address = new TextField("Adres");
     //TextField nationality = new TextField("Narodowość");
     TextField comment = new TextField("Komentarz");
@@ -37,12 +37,14 @@ public class CustomerForm extends FormLayout {
         add(
             name,
             surname,
-            email,
-            phone_number,
-            id_card_number,
+                phone_number,
+                comment,
+                email,
+
+            //id_card_number,
             //address,
             //nationality,
-            comment,
+
             buttonsLayout
         );
 

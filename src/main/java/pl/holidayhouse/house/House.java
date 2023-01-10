@@ -21,6 +21,3 @@ public class House {
     @NonNull
     private String comment;
 }
-
-
-

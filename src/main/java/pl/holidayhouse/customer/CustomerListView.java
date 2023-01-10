@@ -97,10 +97,10 @@ public class CustomerListView extends VerticalLayout {
         grid.addClassName("customer-grid");
         grid.setSizeFull();
 
-        grid.setColumns("name", "surname", "id_card_number", "phone_number", "email", "comment");
+        grid.setColumns("name", "surname", "phone_number", "email", "comment");
         grid.getColumnByKey("name").setHeader("Imię");
         grid.getColumnByKey("surname").setHeader("Nazwisko");
-        grid.getColumnByKey("id_card_number").setHeader("Numer dowodu");
+        //grid.getColumnByKey("id_card_number").setHeader("Numer dowodu");
         grid.getColumnByKey("phone_number").setHeader("Telefon");
         grid.getColumnByKey("email").setHeader("Email");
         //grid.getColumnByKey("address").setHeader("Adres");

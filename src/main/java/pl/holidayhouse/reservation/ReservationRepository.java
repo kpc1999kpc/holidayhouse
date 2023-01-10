@@ -1,9 +1,9 @@
 package pl.holidayhouse.reservation;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pl.holidayhouse.employee.Employee;
 import pl.holidayhouse.house.House;
 
 import java.time.LocalDate;
@@ -18,7 +18,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             nativeQuery = true)
     List<Reservation> search(@Param("searchTerm") String searchTerm);
 
-    @Query(value = "SELECT * FROM house h WHERE h.status = 'aktywny' AND h.house_id NOT IN (" +
+    @Query(value = "SELECT * FROM house h WHERE h.house_id NOT IN (" +
             "SELECT DISTINCT u.house_id FROM reservation u " +
             "WHERE (:check_in < u.check_out) AND (:check_out > u.check_in))",
             nativeQuery = true)

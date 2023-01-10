@@ -1,4 +1,5 @@
 package pl.holidayhouse.reservation;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -19,8 +20,6 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.shared.Registration;
 import pl.holidayhouse.customer.Customer;
-import pl.holidayhouse.employee.Employee;
-import pl.holidayhouse.employee.EmployeeForm;
 import pl.holidayhouse.house.House;
 
 import java.util.List;
@@ -35,10 +34,8 @@ public class ReservationForm extends FormLayout {
     DatePicker reservation_date = new DatePicker("Data rezerwacji");
     DatePicker check_in = new DatePicker("Data przyjazdu");
     DatePicker check_out = new DatePicker("Data wyjazdu");
-    TextField reservation_status = new TextField("Status");
     TextField comment = new TextField("Komentarz");
     ComboBox<House> house = new ComboBox<>("Domek");
-    ComboBox<Employee> employee = new ComboBox<>("Pracownik");
     ComboBox<Customer> customer = new ComboBox<>("Klient");
 
     Button save = new Button("Zapisz");
@@ -46,15 +43,11 @@ public class ReservationForm extends FormLayout {
     Button cancel = new Button("Anuluj");
     private Reservation reservation;
 
-    public ReservationForm(List<Employee> employees, List<Customer> customers, List<House> houses){
+    public ReservationForm(List<Customer> customers, List<House> houses){
         addClassName("reservation-form");
 
         check_in.addValueChangeListener(e -> check_out.setMin(e.getValue()));
         check_out.addValueChangeListener(e -> check_in.setMax(e.getValue()));
-
-
-        employee.setItems(employees);
-        employee.setItemLabelGenerator(e-> e.getName() + " " + e.getSurname());
 
         customer.setItems(customers);
         customer.setItemLabelGenerator(e-> e.getName() + " " + e.getSurname());
@@ -101,15 +94,12 @@ public class ReservationForm extends FormLayout {
             check_in,
             check_out,
             house,
-            reservation_status,
             customer,
-            employee,
             buttonsLayout
         );
 
         setResponsiveSteps(new ResponsiveStep("0", 2));
         setColspan(customer, 2);
-        setColspan(employee, 2);
         setColspan(buttonsLayout, 2);
     }
 

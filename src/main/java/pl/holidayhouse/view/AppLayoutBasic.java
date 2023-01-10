@@ -11,7 +11,6 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import pl.holidayhouse.customer.CustomerListView;
-import pl.holidayhouse.employee.EmployeeListView;
 import pl.holidayhouse.house.HouseListView;
 import pl.holidayhouse.payment.PaymentListView;
 import pl.holidayhouse.reservation.ReservationListView;
@@ -41,7 +40,6 @@ public class AppLayoutBasic extends AppLayout {
                 createTab(VaadinIcon.CALENDAR, "Rezerwacje", ReservationListView.class),
                 createTab(VaadinIcon.MONEY_DEPOSIT, "Płatności", PaymentListView.class),
                 createTab(VaadinIcon.USER_HEART, "Klienci", CustomerListView.class),
-                createTab(VaadinIcon.USER_STAR, "Pracownicy", EmployeeListView.class),
                 createTab(VaadinIcon.MONEY_WITHDRAW, "Wypłaty", SalaryListView.class),
                 createTab(VaadinIcon.HOME, "Domki", HouseListView.class)
         );

@@ -11,30 +11,28 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import pl.holidayhouse.employee.EmployeeService;
 import pl.holidayhouse.view.AppLayoutBasic;
 
-@PageTitle("Wypłaty | Summer Holidays")
-@Route(value = "/wyplaty", layout = AppLayoutBasic.class)
+
+@PageTitle("Domki | Summer Holidays")
+@Route(value = "/koszty", layout = AppLayoutBasic.class)
 public class SalaryListView extends VerticalLayout {
     private SalaryForm form;
     Grid<Salary> grid = new Grid<>(Salary.class);
     TextField filterText = new TextField();
     SalaryService salaryService;
-    EmployeeService employeeService;
 
-    public SalaryListView(SalaryService salaryService, EmployeeService employeeService) {
+    public SalaryListView(SalaryService salaryService) {
         this.salaryService = salaryService;
-        this.employeeService = employeeService;
-        addClassName("salaries-list-view");
+        addClassName("salary-list-view");
         setSizeFull();
 
         configureGrid();
         configureForm();
 
         add(
-            getToolbar(),
-            getContent()
+                getToolbar(),
+                getContent()
         );
         updateList();
         closeEditor();
@@ -56,7 +54,7 @@ public class SalaryListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        form = new SalaryForm(employeeService.findAll());
+        form = new SalaryForm();
         form.setWidth("25em");
         form.addListener(SalaryForm.SaveEvent.class, this::saveSalary);
         form.addListener(SalaryForm.DeleteEvent.class, this::deleteSalary);
@@ -80,7 +78,7 @@ public class SalaryListView extends VerticalLayout {
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
-        Button addSalaryButton = new Button("Dodaj wypłatę", new Icon(VaadinIcon.PLUS));
+        Button addSalaryButton = new Button("Dodaj koszt", new Icon(VaadinIcon.PLUS));
         addSalaryButton.addClickListener(e -> addSalary());
 
         HorizontalLayout toolbar = new HorizontalLayout(filterText, addSalaryButton);
@@ -100,12 +98,10 @@ public class SalaryListView extends VerticalLayout {
         grid.addClassName("salary-grid");
         grid.setSizeFull();
 
-        grid.setColumns("salary_id", "amount", "salary_date", "comment");
-        grid.addColumn(employee -> employee.getEmployee().getName() + " " + employee.getEmployee().getSurname()).setHeader("Pracownik");
-
+        grid.setColumns("salary_id", "salary_date", "amount", "comment");
         grid.getColumnByKey("salary_id").setHeader("Numer");
+        grid.getColumnByKey("salary_date").setHeader("Data");
         grid.getColumnByKey("amount").setHeader("Kwota");
-        grid.getColumnByKey("salary_date").setHeader("Data wypłay");
         grid.getColumnByKey("comment").setHeader("Komentarz");
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));

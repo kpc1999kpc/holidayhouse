@@ -33,6 +33,3 @@ public class Customer {
     @NonNull
     private String comment;
 }
-
-
-

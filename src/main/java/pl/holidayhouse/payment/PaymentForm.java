@@ -17,8 +17,6 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.shared.Registration;
-import pl.holidayhouse.employee.Employee;
-import pl.holidayhouse.house.House;
 import pl.holidayhouse.reservation.Reservation;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package pl.holidayhouse.salary;
 
 import lombok.*;
-import pl.holidayhouse.employee.Employee;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -25,10 +24,6 @@ public class Salary {
     private BigDecimal amount;
     @NonNull
     private String comment;
-    @NonNull
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
 }
 
 

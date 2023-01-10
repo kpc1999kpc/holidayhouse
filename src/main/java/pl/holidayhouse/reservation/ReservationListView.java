@@ -12,11 +12,8 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import pl.holidayhouse.customer.CustomerService;
-import pl.holidayhouse.employee.EmployeeService;
 import pl.holidayhouse.house.HouseService;
 import pl.holidayhouse.view.AppLayoutBasic;
-
-import java.util.Collections;
 
 @PageTitle("Rezerwacje | Summer Holidays")
 @Route(value = "/rezerwacje", layout = AppLayoutBasic.class)
@@ -25,14 +22,12 @@ public class ReservationListView extends VerticalLayout {
     Grid<Reservation> grid = new Grid<>(Reservation.class);
     TextField filterText = new TextField();
     ReservationService reservationService;
-    EmployeeService employeeService;
     CustomerService customerService;
     HouseService houseService;
 
-    public ReservationListView(ReservationService reservationService, EmployeeService employeeService,
+    public ReservationListView(ReservationService reservationService,
                                CustomerService customerService, HouseService houseService) {
         this.reservationService = reservationService;
-        this.employeeService = employeeService;
         this.customerService = customerService;
         this.houseService = houseService;
         addClassName("reservations-list-view");
@@ -65,7 +60,7 @@ public class ReservationListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        form = new ReservationForm(employeeService.findAll(), customerService.findAll(), houseService.findAll());
+        form = new ReservationForm(customerService.findAll(), houseService.findAll());
         form.setWidth("25em");
         form.addListener(ReservationForm.SaveEvent.class, this::saveReservation);
         form.addListener(ReservationForm.DeleteEvent.class, this::deleteReservation);
@@ -109,15 +104,14 @@ public class ReservationListView extends VerticalLayout {
         grid.addClassName("reservation-grid");
         grid.setSizeFull();
 
-        grid.setColumns("reservation_id", "guests_number", "price_per_night", "reservation_status",
+        grid.setColumns("reservation_id", "guests_number", "price_per_night",
                 "check_in", "check_out", "reservation_date");
         grid.addColumn(house -> house.getHouse().getHouse_id()).setHeader("Domek");
         grid.addColumn(customer -> customer.getCustomer().getName() + " " + customer.getCustomer().getSurname()).setHeader("Klient");
-        grid.addColumn(employee -> employee.getEmployee().getName() + " " + employee.getEmployee().getSurname()).setHeader("Pracownik");
+
         grid.getColumnByKey("reservation_id").setHeader("Numer");
         grid.getColumnByKey("guests_number").setHeader("Liczba osób");
         grid.getColumnByKey("price_per_night").setHeader("Cena za dobę");
-        grid.getColumnByKey("reservation_status").setHeader("Status");
         grid.getColumnByKey("reservation_date").setHeader("Data rezerwacji");
         grid.getColumnByKey("check_in").setHeader("Data zameldowania");
         grid.getColumnByKey("check_out").setHeader("Data wymeldowania");

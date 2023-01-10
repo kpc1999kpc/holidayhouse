@@ -2,7 +2,6 @@ package pl.holidayhouse.reservation;
 
 import lombok.*;
 import pl.holidayhouse.customer.Customer;
-import pl.holidayhouse.employee.Employee;
 import pl.holidayhouse.house.House;
 
 import javax.persistence.*;
@@ -26,8 +25,6 @@ public class Reservation {
     @NonNull
     private BigDecimal price_per_night;
     @NonNull
-    private String reservation_status;
-    @NonNull
     private LocalDate reservation_date;
     @NonNull
     private LocalDate check_in;
@@ -39,10 +36,6 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
-    @NonNull
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
     @NonNull
     @ManyToOne
     @JoinColumn(name = "house_id")
