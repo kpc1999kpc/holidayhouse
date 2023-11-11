@@ -3,6 +3,12 @@
 .settings
 .project
 .classpath
+.mvn/
+mvnw.cmd
+mvnw
+HELP.md
+node_modules/
+
 
 *.iml
 .DS_Store
