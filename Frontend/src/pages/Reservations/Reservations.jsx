@@ -77,19 +77,16 @@ const reservationsGridColumns = [
       textAlign: 'Center',
     },     
     {
-      field: 'dateRange',
-      headerText: 'Pobyt',
-      width: '300',
-      textAlign: 'Center',
-      template: ({ checkIn, checkOut }) => {
-        const format = date => date.toLocaleDateString('pl-PL');
-        return (
-          <div>
-            <p>Zameldowanie: {format(new Date(checkIn))}</p>
-            <p>Wymeldowanie: {format(new Date(checkOut))}</p>
-          </div>
-        );
-      },
+    field: 'dateRange',
+    headerText: 'Pobyt',
+    width: '300',
+    textAlign: 'Center',
+    template: ({ dateRange }) => {
+      const format = date => new Date(date).toLocaleDateString('pl-PL');
+      return (
+        <span>{format(dateRange.checkIn)} - {format(dateRange.checkOut)}</span>
+      );
+    },
       editTemplate: () => (
         <>
         <p style={{
