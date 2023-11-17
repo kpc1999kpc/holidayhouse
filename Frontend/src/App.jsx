@@ -5,7 +5,7 @@ import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { Navbar, Footer, Sidebar, ThemeSettings } from './components'
 import { Ecommerce, Orders, Calendar, Employees,
 Pracowynicy, Pyramid, Kanban, Area, Bar,
-Pie, Line, Financial, ColorPicker, ColorMapping, Editor, Customers, Houses, Reservations} from './pages'
+Pie, Line, Financial, ColorPicker, ColorMapping, Editor, Customers, Houses, Reservations, Payments} from './pages'
 
 
 import { useStateContext } from './contexts/ContextProvider';
@@ -61,10 +61,14 @@ const App = () => {
               <Route path="/dashboard" element={<Ecommerce />} />
               
               {/* Pages */}
+              <Route path="/rezerwacje" element={<Reservations />} />
+              <Route path="/platnosci" element={<Payments />} />
+              <Route path="/domki" element={<Houses />} />
+              <Route path="/klienci" element={<Customers />} />
+
               <Route path="/orders" element={<Orders />} />
               <Route path="/pracownicy" element={<Employees />} />
-              <Route path="/klienci" element={<Customers />} />
-              <Route path="/domki" element={<Houses />} />
+              
               {/* Apps */}
               <Route path="/kanban" element={<Kanban />} />
               <Route path="/editor" element={<Editor />} />
@@ -79,7 +83,7 @@ const App = () => {
               <Route path="/financial" element={<Financial />} />
               <Route path="/color-mapping" element={<ColorMapping />} />
               <Route path="/pyramid" element={<Pyramid />} />
-              <Route path="/rezerwacje" element={<Reservations />} />
+              
 
             </Routes>
           </div>

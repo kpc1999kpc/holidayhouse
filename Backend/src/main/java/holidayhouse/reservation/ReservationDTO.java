@@ -10,8 +10,9 @@ import java.time.LocalDate;
 public class ReservationDTO {
 
     private Long id;
-    private Integer guestsNumber;
-    private DateRange dateRange; // Używając klasy DateRange
+    private Integer guests_number;
+    private LocalDate check_in;
+    private LocalDate check_out;
     private String comment;
     private Long customerId;
     private String customerFullName; // Zakładam, że w klasie Customer są pola firstName i lastName
@@ -25,29 +26,24 @@ public class ReservationDTO {
     // Konstruktor z wszystkimi polami
     public ReservationDTO(Reservation reservation) {
         this.id = reservation.getId();
-        this.guestsNumber = reservation.getGuests_number();
-        this.dateRange = new DateRange(reservation.getCheck_in(), reservation.getCheck_out());
+        this.guests_number = reservation.getGuests_number();
+        this.check_in = reservation.getCheck_in();
+        this.check_out = reservation.getCheck_out();
         this.comment = reservation.getComment();
 
+        // Łączenie nazwiska i imienia klienta w jednym polu z uwzględnieniem wartości null
         Customer customer = reservation.getCustomer();
         this.customerFullName = (customer != null && customer.getSurname() != null ? customer.getSurname() : "") +
                 (customer != null && customer.getName() != null ? " " + customer.getName() : "");
 
+        // Ustawienie customerId
         this.customerId = (customer != null ? customer.getId() : null);
 
+        // Bezpieczne pobieranie nazwy domu i jego ID z obiektu house
         House house = reservation.getHouse();
         this.houseName = (house != null && house.getName() != null) ? house.getName() : "Nieznany";
+        // Ustawienie houseId
         this.houseId = (house != null ? house.getId() : null);
     }
 
-    @Data
-    public static class DateRange {
-        private LocalDate checkIn;
-        private LocalDate checkOut;
-
-        public DateRange(LocalDate checkIn, LocalDate checkOut) {
-            this.checkIn = checkIn;
-            this.checkOut = checkOut;
-        }
-    }
 }

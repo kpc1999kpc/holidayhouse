@@ -475,6 +475,10 @@ export const links = [
     icon: <ImList2 />,
   },
   {
+    name: 'płatności',
+    icon: <BsCurrencyDollar />,
+  },
+  {
     name: 'klienci',
     icon: <RiContactsLine />,
   },

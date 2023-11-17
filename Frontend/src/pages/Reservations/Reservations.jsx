@@ -12,116 +12,100 @@ import {
   Search,
 } from '@syncfusion/ej2-react-grids';
 import LoadingSpinner from '../LoadingSpinner';
-import { DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
-import { DateRangePicker } from 'rsuite';
 import 'rsuite/dist/rsuite.css';
+import { DataManager, Query } from '@syncfusion/ej2-data';
 
+// Komponent rezerwacji
+const Reservations = () => {
+  const [reservations, setReservations] = useState([]);
+  const [customerData, setCustomerData] = useState([]);
+  const [housesData, setHousesData] = useState([]);
 
-const customerList = [
-  { id: 1, name: 'Jan Kowalski' },
-  { id: 2, name: 'Anna Nowak' },
-  // inne osoby...
-];
-
-// Komponent szablonu dla komentarzy
-const CommentTemplate = (props) => (
-  <div className="flex items-center justify-center h-full">
-    <div className="flex items-center min-w-[50px] gap-2">
-      <p>{props.comment || 'Brak'}</p>
-    </div>
-  </div>
-);
-
-// Parametry dla edytora daty
-const dateParams = {
-  params: {
-    format: 'dd.MM.yyyy'
-  }
-};
-
-// Konfiguracja kolumn dla tabeli rezerwacji
-const reservationsGridColumns = [
-  {
-    field: 'customerFullName',
-    headerText: 'Klient',
-    width: '150',
-    textAlign: 'Left',
-    editType: 'dropdownedit',
-    edit: {
-      params: {
-        create: () => {
-          return new window.ej.dropdowns.DropDownList({
-            dataSource: customerList,
-            fields: { value: 'name' },
-            allowFiltering: true,
-            filtering: function (e) {
-              let query = new window.ej.data.Query();
-              query = (e.text !== '') ? query.where('name', 'contains', e.text, true) : query;
-              e.updateData(customerList, query);
-            }
-          });
-        }
+  // Konfiguracja kolumn dla tabeli rezerwacji
+  const reservationsGridColumns = [
+    {
+      field: 'customerFullName',
+      headerText: 'Klient',
+      width: '150',
+      textAlign: 'Center',
+      editType: 'dropdownedit',
+      edit: {
+        params: {
+          actionComplete: () => false,
+          allowFiltering: true,
+          filterType: "contains",
+          dataSource: new DataManager(customerData),
+          fields: { value: 'name' },
+          query: new Query()
       }
-    }
-  },
+      }
+    },
     {
       field: 'houseName',
       headerText: 'Domek',
       width: '150',
-      textAlign: 'Center'
+      textAlign: 'Center',
+      editType: 'dropdownedit',
+      edit: {
+        params: {
+          actionComplete: () => false,
+          allowFiltering: false,
+          dataSource: new DataManager(housesData),
+          query: new Query()
+      }   
+      }
     },
     {
-      field: 'guestsNumber',
+      field: 'guests_number',
       headerText: 'Ilość osób',
-      width: '120',
+      width: '100',
       textAlign: 'Center',
+      editType: 'numericedit',
+      edit: {
+        params: {
+          decimals: 0,
+          format: "N",
+          
+        }
+      }
     },     
     {
-    field: 'dateRange',
-    headerText: 'Pobyt',
-    width: '300',
-    textAlign: 'Center',
-    template: ({ dateRange }) => {
-      const format = date => new Date(date).toLocaleDateString('pl-PL');
-      return (
-        <span>{format(dateRange.checkIn)} - {format(dateRange.checkOut)}</span>
-      );
+      field: 'check_in',
+      headerText: 'Zameldowanie',
+      width: '150',
+      textAlign: 'Center',
+      editType: 'datepickeredit',
+      type: 'date',
+      format: 'dd.MM.yyyy',
+      edit: {
+        params: {
+          format: 'dd.MM.yyyy'
+        }
+      }
     },
-      editTemplate: () => (
-        <>
-        <p style={{
-          fontSize: '0.75rem',
-          fontWeight: '50',
-          color: '#858585',
-          margin: '0.5rem 0'
-        }}>
-          Pobyt
-        </p>
-        <DateRangePicker
-        format="dd.MM.yyyy"
-        character=" - "
-        placement="top"
-        placeholder="ㅤ"
-        appearance="subtle"
-        showOneCalendar
-        size="sd"
-        block
-        ranges={[]}/>
-        </>
-      )
+    {
+      field: 'check_out',
+      headerText: 'Wymeldowanie',
+      width: '150',
+      textAlign: 'Center',
+      editType: 'datepickeredit',
+      type: 'date',
+      format: 'dd.MM.yyyy',
+      edit: {
+        params: {
+          format: 'dd.MM.yyyy'
+        }
+      }
     },
     {
       field: 'comment',
       headerText: 'Komentarz',
       width: '160',
-      textAlign: 'Center',
-      template: CommentTemplate
+      textAlign: 'Center'
     }
-];
+  ];
 
-// Komponent rezerwacji
-const Reservations = () => {
-  const [reservations, setReservations] = useState([]);
+  const [columns, setColumns] = useState(reservationsGridColumns);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -131,27 +115,78 @@ const Reservations = () => {
   
   // Hook useEffect do pobierania danych rezerwacji
   useEffect(() => {
-    fetch('http://localhost:8081/reservations')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Błąd sieciowy podczas pobierania danych');
+  // Pobieranie danych rezerwacji
+  fetch('http://localhost:8081/reservations')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Błąd sieciowy podczas pobierania danych');
+      }
+      return response.json();
+    })
+    .then(data => {
+      setReservations(data);
+      setLoading(false);
+    })
+    .catch(err => {
+      setError(err.message);
+      setLoading(false);
+    });
+  
+    Promise.all([
+      fetch('http://localhost:8081/houses/active').then(response => response.json()),
+      fetch('http://localhost:8081/customers/fullnames').then(response => response.json())
+    ])
+    .then(([housesData, customerData]) => {
+      // Przetwarzanie i ustawianie danych domków
+      setHousesData(housesData);
+  
+      // Ustawianie danych klientów
+      setCustomerData(customerData);
+  
+      // Aktualizacja kolumn
+      const updatedColumns = columns.map(column => {
+        if (column.field === 'houseName') {
+          return {
+            ...column,
+            edit: {
+              ...column.edit,
+              params: {
+                ...column.edit.params,
+                dataSource: new DataManager(housesData),
+                fields: { value: 'name' }
+              }
+            }
+          };
+        } else if (column.field === 'customerFullName') {
+          return {
+            ...column,
+            edit: {
+              ...column.edit,
+              params: {
+                ...column.edit.params,
+                dataSource: new DataManager(customerData),
+                fields: { value: 'name' }
+              }
+            }
+          };
         }
-        return response.json();
-      })
-      .then(data => {
-        setReservations(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
+        
+        return column;
       });
+      setColumns(updatedColumns);
+    })
+    .catch(error => {
+      console.error('Błąd podczas pobierania danych:', error);
+      setError(error.message);
+    });
   }, []);
+
 
   // Obsługa zakończenia akcji w komponencie tabeli
   const handleActionComplete = async (args) => {
     const reservationData = args.data;
-    if (args.requestType === 'save') {
+    
+    if (args.requestType === 'save') {      
       let url = 'http://localhost:8081/reservations';
       let method = 'POST';
       if (reservationData.id) {
@@ -235,7 +270,7 @@ const Reservations = () => {
       actionComplete={handleActionComplete}
     >
       <ColumnsDirective>
-        {reservationsGridColumns.map((item, index) => (
+        {columns.map((item, index) => (
           <ColumnDirective key={index} {...item} />
         ))}
       </ColumnsDirective>

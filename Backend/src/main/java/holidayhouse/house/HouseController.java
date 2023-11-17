@@ -1,10 +1,10 @@
 package holidayhouse.house;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -40,5 +40,10 @@ public class HouseController {
     @DeleteMapping({"/{id}"})
     public void deleteHouse(@PathVariable Long id) {
         houseService.delete(id);
+    }
+
+    @GetMapping("/active")
+    public List<Map<String, String>> getActiveHouses() {
+        return houseService.getAllHouseNames();
     }
 }

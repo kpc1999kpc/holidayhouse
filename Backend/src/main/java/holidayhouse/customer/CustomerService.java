@@ -4,8 +4,11 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -22,6 +25,18 @@ public class CustomerService {
 
     public Customer getById(Long id) {
         return customerRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Customer not found with id " + id));
+    }
+
+    public List<Map<String, Object>> getAllCustomerFullNames() {
+        return customerRepository.findAll().stream()
+                .map(customer -> {
+                    Map<String, Object> customerNameMap = new HashMap<>();
+                    String fullName = customer.getSurname() + " " + customer.getName();
+                    customerNameMap.put("id", customer.getId());
+                    customerNameMap.put("name", fullName.trim()); // Usuń białe znaki na początku i końcu
+                    return customerNameMap;
+                })
+                .collect(Collectors.toList());
     }
 
     public Customer addCustomer(Customer customer) {

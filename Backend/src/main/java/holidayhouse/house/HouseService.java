@@ -3,8 +3,11 @@ package holidayhouse.house;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class HouseService {
@@ -37,5 +40,15 @@ public class HouseService {
 
     public void delete(Long id) {
         houseRepository.deleteById(id);
+    }
+
+    public List<Map<String, String>> getAllHouseNames() {
+        return houseRepository.findAll().stream()
+                .map(house -> {
+                    Map<String, String> houseNameMap = new HashMap<>();
+                    houseNameMap.put("name", house.getName().trim()); // Usuń białe znaki na początku i końcu
+                    return houseNameMap;
+                })
+                .collect(Collectors.toList());
     }
 }

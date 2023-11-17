@@ -34,7 +34,7 @@ export const reservationsGrid = [
     {
       field: 'checkIn',
       headerText: 'Data Zameldowania',
-      width: '150',
+      width: '80',
       textAlign: 'Center',
       editType: 'datepickeredit',
       format: 'dd.MM.yyyy',
@@ -43,7 +43,7 @@ export const reservationsGrid = [
     {
       field: 'checkOut',
       headerText: 'Data Wymeldowania',
-      width: '150',
+      width: '80',
       textAlign: 'Center',
       editType: 'datepickeredit',
       format: 'dd.MM.yyyy',

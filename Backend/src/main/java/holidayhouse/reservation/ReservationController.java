@@ -37,12 +37,12 @@ public class ReservationController {
     }
 
     @PostMapping
-    public Reservation addReservation(@RequestBody Reservation reservation) {
+    public Reservation addReservation(@RequestBody ReservationDTO reservation) {
         return reservationService.addReservation(reservation);
     }
 
     @PutMapping({"/{id}"})
-    public Reservation updateReservation(@PathVariable Long id, @RequestBody Reservation reservationDetails) {
+    public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDTO reservationDetails) {
         return reservationService.updateReservation(id, reservationDetails);
     }
 

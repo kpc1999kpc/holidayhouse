@@ -8,6 +8,15 @@ import { links } from '../data/dummy';
 import { useStateContext } from '../contexts/ContextProvider';
 import {UserProfile } from '.'
 
+function replacePolishCharacters(str) {
+  const map = {
+      'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n', 'ó': 'o', 'ś': 's', 'ż': 'z', 'ź': 'z',
+      'Ą': 'A', 'Ć': 'C', 'Ę': 'E', 'Ł': 'L', 'Ń': 'N', 'Ó': 'O', 'Ś': 'S', 'Ż': 'Z', 'Ź': 'Z'
+  };
+
+  return str.split('').map(ch => map[ch] || ch).join('');
+}
+
 const Sidebar = () => {
   const { activeMenu, setActiveMenu, screenSize, currentColor, handleClick, isClicked } = useStateContext();
 
@@ -19,6 +28,7 @@ const Sidebar = () => {
 
   const activeLink = 'flex items-center gap-5 pl-5 pt-3 pb-2.5 text-white text-md';
   const normalLink = 'flex items-center gap-5 pl-5 pt-3 pb-2.5 text-md text-gray-700 dark:hover:text-black hover:bg-light-gray';
+
 
   return (
     <div className='h-screen md:overflow-hidden overflow-auto md:hover:overflow-auto bg-white'>
@@ -53,7 +63,7 @@ const Sidebar = () => {
           <div>
             {links.map((link) => (
               <NavLink
-              to={`/${link.name}`}
+              to={`/${replacePolishCharacters(link.name)}`}
               key={link.name}
               onClick={handleCloseSidear}
               style={({ isActive }) => ({
