@@ -43,7 +43,7 @@ const Reservations = () => {
     {
       field: 'houseName',
       headerText: 'Domek',
-      width: '150',
+      width: '100',
       textAlign: 'Center',
       editType: 'dropdownedit',
       edit: {
@@ -72,7 +72,7 @@ const Reservations = () => {
     {
       field: 'check_in',
       headerText: 'Zameldowanie',
-      width: '150',
+      width: '100',
       textAlign: 'Center',
       editType: 'datepickeredit',
       type: 'date',
@@ -86,7 +86,7 @@ const Reservations = () => {
     {
       field: 'check_out',
       headerText: 'Wymeldowanie',
-      width: '150',
+      width: '100',
       textAlign: 'Center',
       editType: 'datepickeredit',
       type: 'date',
@@ -98,9 +98,16 @@ const Reservations = () => {
       }
     },
     {
+      field: 'nights',
+      headerText: 'Doby',
+      width: '70',
+      textAlign: 'Center'
+    }
+    ,
+    {
       field: 'comment',
       headerText: 'Komentarz',
-      width: '160',
+      width: '100',
       textAlign: 'Center'
     }
   ];
@@ -185,6 +192,8 @@ const Reservations = () => {
   // Obsługa zakończenia akcji w komponencie tabeli
   const handleActionComplete = async (args) => {
     const reservationData = args.data;
+
+
     
     if (args.requestType === 'save') {      
       let url = 'http://localhost:8081/reservations';
@@ -232,11 +241,29 @@ const Reservations = () => {
         setError(err.message);
       }
     }
+
+    if (args.requestType === 'save' || args.requestType === 'cancel') {
+      const newColumns = columns.map(col => {
+        if (col.field === 'nights') {
+          return { ...col, visible: true };
+        }
+        return col;
+      });
+      setColumns(newColumns);
+    }
   };
 
   // Obsługa rozpoczęcia akcji
   const handleActionBegin = (args) => {
     if (args.requestType === 'beginEdit' || args.requestType === 'add') {
+      const newColumns = columns.map(col => {
+        if (col.field === 'nights') {
+          return { ...col, visible: false };
+        }
+        return col;
+      });
+      setColumns(newColumns);
+  
       setTimeout(() => {
         if (document.querySelector('.e-dlg-header')) {
           document.querySelector('.e-dlg-header').textContent = 'Szczegóły';

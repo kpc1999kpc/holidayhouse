@@ -5,6 +5,8 @@ import holidayhouse.house.House;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 @Data
 public class ReservationDTO {
@@ -18,6 +20,7 @@ public class ReservationDTO {
     private String customerFullName; // Zakładam, że w klasie Customer są pola firstName i lastName
     private Long houseId;
     private String houseName; // Zakładam, że w klasie House jest pole name
+    private Integer nights;
 
     // Konstruktor bezparametrowy
     public ReservationDTO() {
@@ -30,6 +33,10 @@ public class ReservationDTO {
         this.check_in = reservation.getCheck_in();
         this.check_out = reservation.getCheck_out();
         this.comment = reservation.getComment();
+
+        if(this.check_in != null && this.check_out != null) {
+            this.nights = (int) ChronoUnit.DAYS.between(this.check_in, this.check_out);
+        }
 
         // Łączenie nazwiska i imienia klienta w jednym polu z uwzględnieniem wartości null
         Customer customer = reservation.getCustomer();
