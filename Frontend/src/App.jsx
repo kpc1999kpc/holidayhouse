@@ -3,9 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { Navbar, Footer, Sidebar, ThemeSettings } from './components'
-import { Ecommerce, Orders, Calendar, Employees,
-Pracowynicy, Pyramid, Kanban, Area, Bar,
-Pie, Line, Financial, ColorPicker, ColorMapping, Editor, Customers, Houses, Reservations, Payments} from './pages'
+import { Orders, Calendar, Employees, Pyramid, Kanban, Area, Bar,
+Pie, Line, Financial, ColorPicker, ColorMapping, Editor, Customers, Houses, Reservations, Payments, Dashboard} from './pages'
 
 
 import { useStateContext } from './contexts/ContextProvider';
@@ -57,8 +56,8 @@ const App = () => {
             { themeSettings && <ThemeSettings />}
             <Routes>
               {/* Dashboard */}
-              <Route path="/" element={<Ecommerce />} />
-              <Route path="/dashboard" element={<Ecommerce />} />
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               
               {/* Pages */}
               <Route path="/rezerwacje" element={<Reservations />} />

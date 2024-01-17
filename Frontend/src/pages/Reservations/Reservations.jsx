@@ -193,9 +193,20 @@ const Reservations = () => {
   const handleActionComplete = async (args) => {
     const reservationData = args.data;
 
-
-    
-    if (args.requestType === 'save') {      
+    if (args.requestType === 'save') {
+      if (reservationData.check_in instanceof Date) {
+        // Dodaj czas lokalny do daty, aby uniknąć przesunięcia UTC
+        const offset = reservationData.check_in.getTimezoneOffset();
+        const checkIn = new Date(reservationData.check_in.getTime() - offset * 60 * 1000);
+        reservationData.check_in = checkIn.toISOString().split('T')[0];
+      }
+      if (reservationData.check_out instanceof Date) {
+        // Dodaj czas lokalny do daty, aby uniknąć przesunięcia UTC
+        const offset = reservationData.check_out.getTimezoneOffset();
+        const checkOut = new Date(reservationData.check_out.getTime() - offset * 60 * 1000);
+        reservationData.check_out = checkOut.toISOString().split('T')[0];
+      }
+      console.log('Formatted reservation data being sent to server:', reservationData);
       let url = 'http://localhost:8081/reservations';
       let method = 'POST';
       if (reservationData.id) {
@@ -256,6 +267,8 @@ const Reservations = () => {
   // Obsługa rozpoczęcia akcji
   const handleActionBegin = (args) => {
     if (args.requestType === 'beginEdit' || args.requestType === 'add') {
+      
+
       const newColumns = columns.map(col => {
         if (col.field === 'nights') {
           return { ...col, visible: false };

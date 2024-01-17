@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface HouseRepository extends JpaRepository<House, Long> {
     List<House> findByStatus(String status);
     Optional<House> findByName(String name);
+    long count();
 }

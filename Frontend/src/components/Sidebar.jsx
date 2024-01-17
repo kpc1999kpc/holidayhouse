@@ -56,7 +56,7 @@ const Sidebar = () => {
                 <span className='text-gray-800 ml-4 text-20 font-bold'> Na Fali </span>
             </p>
             <p>
-                <span className='text-gray-500 ml-4 text-14'> Daria Drażba </span>
+                <span className='text-gray-500 ml-4 text-14'> Kamil Pawłowski </span>
             </p>
           </div>
 

@@ -1,11 +1,14 @@
 package holidayhouse.reservation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.print.Book;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -38,6 +41,7 @@ public class ReservationController {
 
     @PostMapping
     public Reservation addReservation(@RequestBody ReservationDTO reservation) {
+
         return reservationService.addReservation(reservation);
     }
 
@@ -49,5 +53,15 @@ public class ReservationController {
     @DeleteMapping({"/{id}"})
     public void deleteReservation(@PathVariable Long id) {
         reservationService.delete(id);
+    }
+
+    @GetMapping("/details")
+    public List<Map<String, String>> getAllReservationDetails() {
+        return reservationService.getAllFormattedReservationDetails();
+    }
+
+    @GetMapping("/collisions")
+    public Map<Long, List<Long>> checkForCollisions() {
+        return reservationService.findAllCollisions();
     }
 }

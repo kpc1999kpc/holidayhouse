@@ -35,6 +35,7 @@ public class HouseService {
         house.setName(houseDetails.getName());
         house.setStatus(houseDetails.getStatus());
         house.setComment(houseDetails.getComment());
+        house.setNumberOfBeds(houseDetails.getNumberOfBeds());
         return houseRepository.save(house);
     }
 

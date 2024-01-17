@@ -18,7 +18,6 @@ const HouseName = (props) => (
   </div>
 );
 
-
 const HouseStatus = (props) => (
   <div className="flex items-center justify-center h-full">
     <div className="flex items-center min-w-[93px] gap-2">
@@ -32,6 +31,14 @@ const HouseComment = (props) => (
   <div className="flex items-center justify-center h-full">
     <div className="flex items-center min-w-[200px] gap-2">
       <p>{props.Comment || 'Brak'}</p>
+    </div>
+  </div>
+);
+
+const HouseBeds = (props) => (
+  <div className="flex items-center justify-center h-full">
+    <div className="flex items-center min-w-[58px]">
+      <p>{props.NumberOfBeds}</p>
     </div>
   </div>
 );
@@ -72,6 +79,13 @@ export const housesGrid = [
           fields: { text: 'text', value: 'value' } 
         }
       }
+    },
+    {
+      field: 'numberOfBeds',
+      headerText: 'Ilość Miejsc',
+      width: '150',
+      textAlign: 'Center',
+      template: (data) => <HouseBeds NumberOfBeds={data.numberOfBeds} />
     },     
     {
       field: 'comment',

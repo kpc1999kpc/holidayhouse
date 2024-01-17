@@ -21,6 +21,7 @@ public class House {
     private String name;
     private String status;
     private String comment;
+    private Integer numberOfBeds;
 
     @OneToMany(mappedBy = "house")
     private Set<Reservation> reservations;

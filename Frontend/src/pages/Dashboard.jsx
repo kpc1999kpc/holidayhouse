@@ -1,21 +1,101 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BsCurrencyDollar } from 'react-icons/bs';
 import { BsThreeDots } from "react-icons/bs";
 import { GoPrimitiveDot } from 'react-icons/go'
 import { Pracownicy, Pie, Button, LineChart, SparkLine } from '../components';
-import { earningData, SparklineAreaData,
-ecomPieChartData } from '../data/dummy'
+import { SparklineAreaData, ecomPieChartData } from '../data/dummy'
 import { useStateContext } from '../contexts/ContextProvider';
 import { Header } from '../components'
 import { MdOutlineEmail } from 'react-icons/md'
 import { VictoryPie } from 'victory';
 import { BsEyeFill } from 'react-icons/bs'
 import { Link } from 'react-router-dom';
+import { MdOutlineSupervisorAccount } from 'react-icons/md';
+import { IoSunnyOutline } from "react-icons/io5";
+import { FiBarChart } from 'react-icons/fi';
+import { BsHouse } from 'react-icons/bs';
 
-const Ecommerce = () => {
-  const { currentColor } = useStateContext()
+const Dashboard = () => {
+  const { currentColor } = useStateContext();
+  const [annualSums, setAnnualSums] = useState({}); // Tutaj tworzymy stan za pomocą hooka useState
+
+  useEffect(() => {
+    // Funkcja do pobierania danych z API
+    const fetchAnnualSums = async () => {
+      try {
+        const response = await fetch('http://localhost:8081/payments/annual-summary/2023');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setAnnualSums(data); // Zaktualizuj stan komponentu danymi z API
+      } catch (error) {
+        console.error("Błąd podczas pobierania danych:", error);
+      }
+    };
+
+    fetchAnnualSums(); // Wywołaj funkcję przy montowaniu komponentu
+  }, []); // Pusta tablica zależności, aby wykonać tylko raz
+
+  const earningData = [
+    {
+      icon: <MdOutlineSupervisorAccount />,
+      amount: annualSums.totalGuests || 0,
+      percentage: '',
+      title: 'Klienci',
+      iconColor: '#03C9D7',
+      iconBg: '#E5FAFB',
+      pcColor: 'red-600',
+      url: '/klienci',
+    },
+    {
+      icon: <BsHouse />,
+      amount: annualSums.totalHouses || 0,
+      percentage: '',
+      title: 'Domki',
+      iconColor: 'rgb(255, 244, 229)',
+      iconBg: 'rgb(254, 201, 15)',
+      pcColor: 'green-600',
+      url: '/domki',
+    },
+    {
+      icon: <BsCurrencyDollar />,
+      amount: annualSums.totalIncome || 0, 
+      percentage: '',
+      title: 'Przychód',
+      iconColor: 'rgb(0, 194, 146)',
+      iconBg: 'rgb(235, 250, 242)',
+      pcColor: 'red-600',
+      url: '/platnosci',
+    },
+    {
+      icon: <IoSunnyOutline />,
+      amount: annualSums.totalClimateFee || 0,
+      percentage: '',
+      title: 'Klimatyczne',
+      iconColor: 'rgb(0, 194, 146)',
+      iconBg: 'rgb(235, 250, 242)',
+      pcColor: 'red-600',
+      iconColor: 'rgb(228, 106, 118)',
+      iconBg: 'rgb(255, 244, 229)',
+      pcColor: 'green-600',
+      url: '/rezerwacje',
+    },
+    {
+      
+      icon: <FiBarChart />,
+      amount: annualSums.totalReservations || 0,
+      percentage: '',
+      title: 'Rezerwacje',
+      iconColor: 'rgb(1 00, 100, 146)',
+      iconBg: 'rgb(220, 220, 250)',
+      pcColor: 'red-600',
+      url: '/rezerwacje',
+    },
+  ];
+
   return (
-      <div className='px-10'>
+      <div className='px-10 flex-col'>
         <div className='flex 
         w-full justify-center'>
           
@@ -64,12 +144,10 @@ const Ecommerce = () => {
         dark:bg-secondary-dark-bg
         p-4 mt-4 rounded-2xl w-full'>
           <div className='flex justify-between'>
-            <div className='flex items-center
-            gap-4'>
-
+            <div className='flex items-center gap-4'>
                 <span className='text-lg text-zinc-800
                       font-semibold ml-7'>
-                  Statystyki miesiąca:
+                  Podatki:
                 </span>
               
             </div>
@@ -82,7 +160,7 @@ const Ecommerce = () => {
                 <p>
                   <span className='text-3xl
                   font-semibold'>
-                    $700.00
+                    {annualSums.netIncome || 0}
                   </span>
                   <span className='p-1.5
                   hover:drop-shadow-xl
@@ -91,7 +169,7 @@ const Ecommerce = () => {
                   text-white
                   bg-green-400 ml-3
                   text-xs'>
-                    12%
+                    69%
                   </span>
                 </p>
                 <p className='text-gray-500
@@ -103,28 +181,7 @@ const Ecommerce = () => {
                 <p>
                   <span className='text-3xl
                   font-semibold'>
-                    $5800
-                  </span>
-                  <span className='p-1.5
-                  hover:drop-shadow-xl
-                  cursor-pointer
-                  rounded-full
-                  text-white
-                  bg-green-400 ml-3
-                  text-xs'>
-                    7%
-                  </span>
-                </p>
-                <p className='text-gray-500
-                mt-1'>
-                  Przychód
-                </p>
-              </div>
-              <div className='mt-7'>
-                <p>
-                  <span className='text-3xl
-                  font-semibold'>
-                    $500
+                    {annualSums.vatTax || 0}
                   </span>
                   <span className='p-1.5
                   hover:drop-shadow-xl
@@ -133,20 +190,32 @@ const Ecommerce = () => {
                   text-white
                   bg-red-400 ml-3
                   text-xs'>
-                    -3%
+                    23%
+                  </span>
+                </p>
+                <p className='text-gray-500
+                mt-1'>
+                  VAT
+                </p>
+              </div>
+              <div className='mt-7'>
+                <p>
+                  <span className='text-3xl font-semibold'>
+                    {annualSums.incomeTax || 0}
+                  </span>
+                  <span className='p-1.5
+                  hover:drop-shadow-xl
+                  cursor-pointer
+                  rounded-full
+                  text-white
+                  bg-red-400 ml-3
+                  text-xs'>
+                    8%
                   </span>
                 </p>
                 <p className='text-gray-500 mt-1'>
-                  Koszty
+                  Dochodowy
                 </p>
-              </div>
-              <div className='mt-10'>
-                <Button
-                  color='white'
-                  bgColor={ currentColor }
-                  text='Pobierz Raport'
-                  borderRadius='10px'
-                />
               </div>
             </div>
             <div className='bg-balck'>
@@ -248,4 +317,4 @@ const Ecommerce = () => {
   )
 }
 
-export default Ecommerce
+export default Dashboard

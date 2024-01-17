@@ -8,8 +8,8 @@ import jakarta.persistence.*;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
@@ -47,6 +47,19 @@ public class ReservationService {
         reservationRepository.deleteById(id);
     }
 
+    public List<Map<String, String>> getAllFormattedReservationDetails() {
+        return reservationRepository.findAll().stream()
+                .map(reservation -> {
+                    Map<String, String> detailsMap = new HashMap<>();
+                    ReservationDTO reservationDTO = new ReservationDTO(reservation);
+                    detailsMap.put("id", reservationDTO.getId().toString());
+                    detailsMap.put("name", reservationDTO.getFormattedReservationDetails());
+
+                    return detailsMap;
+                })
+                .collect(Collectors.toList());
+    }
+
     private Reservation updateReservationDetails(Reservation reservation, ReservationDTO reservationDetails) {
         reservation.setGuests_number(reservationDetails.getGuests_number());
         reservation.setCheck_in(reservationDetails.getCheck_in());
@@ -71,4 +84,27 @@ public class ReservationService {
         return reservation;
     }
 
+    public Map<Long, List<Long>> findAllCollisions() {
+        List<Reservation> allReservations = reservationRepository.findAll();
+        Map<Long, List<Long>> collisionsMap = new HashMap<>();
+
+        for (int i = 0; i < allReservations.size(); i++) {
+            for (int j = i + 1; j < allReservations.size(); j++) {
+                Reservation res1 = allReservations.get(i);
+                Reservation res2 = allReservations.get(j);
+
+                if (isOverlapping(res1, res2)) {
+                    collisionsMap.computeIfAbsent(res1.getId(), k -> new ArrayList<>()).add(res2.getId());
+                    collisionsMap.computeIfAbsent(res2.getId(), k -> new ArrayList<>()).add(res1.getId());
+                }
+            }
+        }
+        return collisionsMap;
+    }
+
+    private boolean isOverlapping(Reservation res1, Reservation res2) {
+        return res1.getHouse().getId().equals(res2.getHouse().getId()) &&
+                res1.getCheck_in().isBefore(res2.getCheck_out()) &&
+                res1.getCheck_out().isAfter(res2.getCheck_in());
+    }
 }

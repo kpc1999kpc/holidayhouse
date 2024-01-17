@@ -11,6 +11,7 @@ import { TiTick } from 'react-icons/ti';
 import { GiLouvrePyramid } from 'react-icons/gi';
 import { GrLocation } from 'react-icons/gr';
 import { ImList2 } from 'react-icons/im';
+import { IoSunnyOutline } from "react-icons/io5";
 
 import avatar from './avatar.jpg';
 import avatar2 from './avatar2.jpg';
@@ -567,7 +568,7 @@ export const chatData = [
 export const earningData = [
   {
     icon: <MdOutlineSupervisorAccount />,
-    amount: '124',
+    amount: '663',
     percentage: '',
     title: 'Klienci',
     iconColor: '#03C9D7',
@@ -579,27 +580,27 @@ export const earningData = [
     icon: <BsHouse />,
     amount: '10',
     percentage: '',
-    title: 'Wolne Domki',
+    title: 'Domki',
     iconColor: 'rgb(255, 244, 229)',
     iconBg: 'rgb(254, 201, 15)',
     pcColor: 'green-600',
     url: '/domki',
   },
   {
-    icon: <FiBarChart />,
-    amount: '1423,39',
+    icon: <BsCurrencyDollar />,
+    amount: '215.842',
     percentage: '',
     title: 'Przychód',
-    iconColor: 'rgb(100, 100, 146)',
-    iconBg: 'rgb(220, 220, 250)',
+    iconColor: 'rgb(0, 194, 146)',
+    iconBg: 'rgb(235, 250, 242)',
     pcColor: 'red-600',
     url: '/platnosci',
   },
   {
-    icon: <HiOutlineRefresh />,
-    amount: '393,54',
+    icon: <IoSunnyOutline />,
+    amount: '8.117',
     percentage: '',
-    title: 'Koszty',
+    title: 'Klimatyczne',
     iconColor: 'rgb(0, 194, 146)',
     iconBg: 'rgb(235, 250, 242)',
     pcColor: 'red-600',
@@ -609,12 +610,12 @@ export const earningData = [
     url: '/rezerwacje',
   },
   {
-    icon: <BsCurrencyDollar />,
-    amount: '50.0000',
+    icon: <FiBarChart />,
+    amount: '156',
     percentage: '',
-    title: 'Dochód',
-    iconColor: 'rgb(0, 194, 146)',
-    iconBg: 'rgb(235, 250, 242)',
+    title: 'Rezerwacje',
+    iconColor: 'rgb(1 00, 100, 146)',
+    iconBg: 'rgb(220, 220, 250)',
     pcColor: 'red-600',
     url: '/rezerwacje',
   },
@@ -3123,32 +3124,18 @@ export const ecomPieChartData = [
 
 export const stackedChartData = [
   [
-    { x: 'styczeń', y: 260 },
-    { x: 'luty', y: 227.3 },
-    { x: 'marzec', y: 243.4 },
-    { x: 'kwiecień', y: 259.9 },
-    { x: 'maj', y: 259.9 },
-    { x: 'czerwiec', y: 259.9 },
-    { x: 'lipiec', y: 1 },
-    { x: 'sierpień', y: 200.9 },
-    { x: 'wrzesień', y: 159.9 },
-    { x: 'lipiec', y: 259.9 },
-    { x: 'listopad', y: 259.9 },
-    { x: 'grudzień', y: 259.9 },
-  ],
-  [
-    { x: 'styczeń', y: 100 },
-    { x: 'luty', y: 27.3 },
-    { x: 'marzec', y: 43.4 },
-    { x: 'kwiecień', y: 59.9 },
-    { x: 'maj', y: 59.9 },
-    { x: 'czerwiec', y: 59.9 },
-    { x: 'lipiec', y: 1 },
-    { x: 'sierpień', y: 59.9 },
-    { x: 'wrzesień', y: 90.9 },
-    { x: 'lipiec', y: 70.9 },
-    { x: 'listopad', y: 50.9 },
-    { x: 'grudzień', y: 40.9 },
+    { x: 'styczeń', y: 0 },
+    { x: 'luty', y: 1350 },
+    { x: 'marzec', y: 350 },
+    { x: 'kwiecień', y: 4100 },
+    { x: 'maj', y: 0 },
+    { x: 'czerwiec', y: 12820 },
+    { x: 'lipiec', y: 97430 },
+    { x: 'sierpień', y: 74363 },
+    { x: 'wrzesień', y: 23108 },
+    { x: 'lipiec', y: 2320 },
+    { x: 'listopad', y: 0 },
+    { x: 'grudzień', y: 0 },
   ],
 ];
 
@@ -3162,16 +3149,6 @@ export const stackedCustomSeries = [
     background: 'blue',
 
   },
-
-  { dataSource: stackedChartData[1],
-    xName: 'x',
-    yName: 'y',
-    name: 'Koszty',
-    type: 'StackingColumn',
-    background: 'red',
-
-  },
-
 ];
 
 export const stackedPrimaryXAxis = {
@@ -3188,8 +3165,8 @@ export const stackedPrimaryXAxis = {
 export const stackedPrimaryYAxis = {
   lineStyle: { width: 0 },
   minimum: 100,
-  maximum: 400,
-  interval: 100,
+  maximum: 100000,
+  interval: 50000,
   majorTickLines: { width: 0 },
   majorGridLines: { width: 1 },
   minorGridLines: { width: 1 },

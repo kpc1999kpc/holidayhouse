@@ -1,10 +1,13 @@
 package holidayhouse.payment;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -18,8 +21,10 @@ public class PaymentController {
     }
 
     @GetMapping
-    public List<Payment> getAllPayments() {
-        return paymentService.getAllPayments();
+    public List<PaymentDTO> getAllPayments() {
+        return paymentService.getAllPayments().stream()
+                .map(PaymentDTO::new)
+                .collect(Collectors.toList());
     }
 
     @GetMapping({"/{id}"})
@@ -28,18 +33,28 @@ public class PaymentController {
     }
 
     @PostMapping
-    public Payment addPayment(@RequestBody Payment payment) {
-        return paymentService.addPayment(payment);
+    public Payment addPayment(@RequestBody PaymentDTO paymentDTO) {
+        return paymentService.addPayment(paymentDTO);
     }
 
     @PutMapping({"/{id}"})
-    public Payment updatePayment(@PathVariable Long id, @RequestBody Payment paymentDetails) {
+    public Payment updatePayment(@PathVariable Long id, @RequestBody PaymentDTO paymentDetails) {
         return paymentService.updatePayment(id, paymentDetails);
     }
 
     @DeleteMapping({"/{id}"})
     public void deletePayment(@PathVariable Long id) {
         paymentService.delete(id);
+    }
+
+    @GetMapping("/annual-summary/{year}")
+    public Map<String, Object> getAnnualPaymentSummaryForYear(@PathVariable int year) {
+        return paymentService.getAnnualPaymentSummaryForYear(year);
+    }
+
+    @GetMapping("/daily-average/{year}")
+    public Map<LocalDate, BigDecimal> getDailyAveragePrice(@PathVariable int year) {
+        return paymentService.calculateDailyAveragePrice(year);
     }
 }
 

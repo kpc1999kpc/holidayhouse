@@ -5,7 +5,7 @@ import holidayhouse.house.House;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 @Data
@@ -53,4 +53,32 @@ public class ReservationDTO {
         this.houseId = (house != null ? house.getId() : null);
     }
 
+    public String getFormattedReservationDetails() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        StringBuilder details = new StringBuilder();
+
+        details.append(this.customerFullName != null ? this.customerFullName : ""); // Zakładając, że zawiera "Nazwisko Imię"
+
+        if (this.guests_number != null) {
+            details.append(" (").append(this.guests_number).append("), ");
+        }
+
+        details.append(this.houseName != null ? this.houseName : "").append(": ");
+
+        if (this.check_in != null) {
+            details.append(check_in.format(formatter));
+        }
+
+        details.append(" - ");
+
+        if (this.check_out != null) {
+            details.append(this.check_out.format(formatter));
+        }
+
+        if (this.nights != null) {
+            details.append(" (").append(this.nights).append(")");
+        }
+
+        return details.toString();
+    }
 }

@@ -20,6 +20,7 @@
     "cldr-data": "^36.0.1",
     "date-fns": "^2.30.0",
     "react": "^17.0.2",
+    "react-big-scheduler": "^0.2.7",
     "react-date-range": "^1.4.0",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
