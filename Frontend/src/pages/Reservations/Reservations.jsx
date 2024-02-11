@@ -15,13 +15,13 @@ import LoadingSpinner from '../LoadingSpinner';
 import 'rsuite/dist/rsuite.css';
 import { DataManager, Query } from '@syncfusion/ej2-data';
 
-// Komponent rezerwacji
 const Reservations = () => {
   const [reservations, setReservations] = useState([]);
   const [customerData, setCustomerData] = useState([]);
   const [housesData, setHousesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Konfiguracja kolumn dla tabeli rezerwacji
   const reservationsGridColumns = [
     {
       field: 'customerFullName',
@@ -37,7 +37,7 @@ const Reservations = () => {
           dataSource: new DataManager(customerData),
           fields: { value: 'name' },
           query: new Query()
-      }
+        }
       }
     },
     {
@@ -52,7 +52,7 @@ const Reservations = () => {
           allowFiltering: false,
           dataSource: new DataManager(housesData),
           query: new Query()
-      }   
+        }
       }
     },
     {
@@ -65,10 +65,9 @@ const Reservations = () => {
         params: {
           decimals: 0,
           format: "N",
-          
         }
       }
-    },     
+    },
     {
       field: 'check_in',
       headerText: 'Zameldowanie',
@@ -102,8 +101,7 @@ const Reservations = () => {
       headerText: 'Doby',
       width: '70',
       textAlign: 'Center'
-    }
-    ,
+    },
     {
       field: 'comment',
       headerText: 'Komentarz',
@@ -113,85 +111,84 @@ const Reservations = () => {
   ];
 
   const [columns, setColumns] = useState(reservationsGridColumns);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   const selectionsettings = { type: 'None' };
   const toolbarOptions = ['Add', 'Edit', 'Delete', 'Search'];
   const editing = { allowDeleting: true, allowEditing: true, allowAdding: true, mode: 'Dialog', dialog: {} };
   
   // Hook useEffect do pobierania danych rezerwacji
   useEffect(() => {
-  // Pobieranie danych rezerwacji
-  fetch('http://localhost:8081/reservations')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Błąd sieciowy podczas pobierania danych');
-      }
-      return response.json();
-    })
-    .then(data => {
-      setReservations(data);
-      setLoading(false);
-    })
-    .catch(err => {
-      setError(err.message);
-      setLoading(false);
-    });
-  
-    Promise.all([
-      fetch('http://localhost:8081/houses/active').then(response => response.json()),
-      fetch('http://localhost:8081/customers/fullnames').then(response => response.json())
-    ])
-    .then(([housesData, customerData]) => {
-      // Przetwarzanie i ustawianie danych domków
-      setHousesData(housesData);
-  
-      // Ustawianie danych klientów
-      setCustomerData(customerData);
-  
-      // Aktualizacja kolumn
-      const updatedColumns = columns.map(column => {
-        if (column.field === 'houseName') {
-          return {
-            ...column,
-            edit: {
-              ...column.edit,
-              params: {
-                ...column.edit.params,
-                dataSource: new DataManager(housesData),
-                fields: { value: 'name' }
-              }
-            }
-          };
-        } else if (column.field === 'customerFullName') {
-          return {
-            ...column,
-            edit: {
-              ...column.edit,
-              params: {
-                ...column.edit.params,
-                dataSource: new DataManager(customerData),
-                fields: { value: 'name' }
-              }
-            }
-          };
-        }
-        
-        return column;
-      });
-      setColumns(updatedColumns);
-    })
-    .catch(error => {
-      console.error('Błąd podczas pobierania danych:', error);
-      setError(error.message);
-    });
-  }, []);
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
+    // Pobieranie danych rezerwacji
+    fetch('http://localhost:8081/reservations', { headers })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Błąd sieciowy podczas pobierania danych');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setReservations(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+
+    // Pobieranie danych domków i klientów
+    Promise.all([
+      fetch('http://localhost:8081/houses/active', { headers }).then(response => response.json()),
+      fetch('http://localhost:8081/customers/fullnames', { headers }).then(response => response.json())
+    ])
+      .then(([housesData, customerData]) => {
+        setHousesData(housesData);
+        setCustomerData(customerData);
+
+        // Aktualizacja kolumn
+        const updatedColumns = columns.map(column => {
+          if (column.field === 'houseName') {
+            return {
+              ...column,
+              edit: {
+                ...column.edit,
+                params: {
+                  ...column.edit.params,
+                  dataSource: new DataManager(housesData),
+                  fields: { value: 'name' }
+                }
+              }
+            };
+          } else if (column.field === 'customerFullName') {
+            return {
+              ...column,
+              edit: {
+                ...column.edit,
+                params: {
+                  ...column.edit.params,
+                  dataSource: new DataManager(customerData),
+                  fields: { value: 'name' }
+                }
+              }
+            };
+          }
+          
+          return column;
+        });
+        setColumns(updatedColumns);
+      })
+      .catch(error => {
+        console.error('Błąd podczas pobierania danych:', error);
+        setError(error.message);
+      });
+}, []);
 
   // Obsługa zakończenia akcji w komponencie tabeli
   const handleActionComplete = async (args) => {
     const reservationData = args.data;
+    const token = localStorage.getItem('token'); // Pobierz token z localStorage
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
     if (args.requestType === 'save') {
       if (reservationData.check_in instanceof Date) {
@@ -219,6 +216,7 @@ const Reservations = () => {
           method,
           headers: {
             'Content-Type': 'application/json',
+            ...authHeaders
           },
           body: JSON.stringify(reservationData),
         });
@@ -241,6 +239,7 @@ const Reservations = () => {
       try {
         const response = await fetch(`http://localhost:8081/reservations/${reservationId}`, {
           method: 'DELETE',
+          headers: authHeaders
         });
 
         if (response.ok) {

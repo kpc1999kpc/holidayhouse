@@ -16,10 +16,10 @@ public class ReservationDTO {
     private LocalDate check_in;
     private LocalDate check_out;
     private String comment;
-    private Long customerId;
-    private String customerFullName; // Zakładam, że w klasie Customer są pola firstName i lastName
+    private Long customerId ;
+    private String customerFullName;
     private Long houseId;
-    private String houseName; // Zakładam, że w klasie House jest pole name
+    private String houseName;
     private Integer nights;
 
     // Konstruktor bezparametrowy

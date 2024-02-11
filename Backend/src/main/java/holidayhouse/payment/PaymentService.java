@@ -5,6 +5,9 @@ import holidayhouse.house.HouseRepository;
 import holidayhouse.reservation.Reservation;
 import holidayhouse.reservation.ReservationRepository;
 import holidayhouse.reservation.ReservationService;
+import holidayhouse.secutiy.demo.AbstractService;
+import holidayhouse.secutiy.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,47 +20,51 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
-public class PaymentService {
-    private final PaymentRepository paymentRepository;
-    private final ReservationRepository reservationRepository;
-    private final ReservationService reservationService;
-    private final HouseRepository houseRepository;
-
-    public PaymentService(PaymentRepository paymentRepository, ReservationRepository reservationRepository, ReservationService reservationService, HouseRepository houseRepository) {
-        this.paymentRepository = paymentRepository;
-        this.reservationRepository = reservationRepository;
-        this.reservationService = reservationService;
-        this.houseRepository = houseRepository;
-    }
+public class PaymentService extends AbstractService {
+    @Autowired
+    private PaymentRepository paymentRepository;
+    @Autowired
+    private ReservationRepository reservationRepository;
+    @Autowired
+    private ReservationService reservationService;
+    @Autowired
+    private HouseRepository houseRepository;
 
     public List<Payment> getAllPayments() {
-        return paymentRepository.findAll();
+        User loggedInUser = getLoggedInUser();
+        return paymentRepository.findByUser(loggedInUser);
     }
 
     public Payment getById(Long id) {
-        return paymentRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Payment not found with id " + id));
+        User loggedInUser = getLoggedInUser();
+        return paymentRepository.findByIdAndUser(id, loggedInUser)
+                .orElseThrow(() -> new NoSuchElementException("Payment not found with id " + id + " for the logged-in user"));
     }
 
     public void delete(Long id) {
-        paymentRepository.deleteById(id);
+        Payment payment = getById(id);
+        paymentRepository.delete(payment);
     }
 
     public Payment addPayment(PaymentDTO paymentDTO) {
+        User loggedInUser = getLoggedInUser();
         Long reservationId = extractReservationId(paymentDTO.getReservationDetails());
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new RuntimeException("Reservation not found with id " + reservationId));
+        Reservation reservation = reservationRepository.findByIdAndUser(reservationId, loggedInUser)
+                .orElseThrow(() -> new RuntimeException("Reservation not found with id " + reservationId + " for the logged-in user"));
 
         Payment payment = new Payment();
         payment.setAmount(paymentDTO.getAmount());
         payment.setReservation(reservation);
+        payment.setUser(loggedInUser);
 
         return paymentRepository.save(payment);
     }
 
     public Payment updatePayment(Long id, PaymentDTO paymentDetails) {
+        User loggedInUser = getLoggedInUser();
         Long reservationId = extractReservationId(paymentDetails.getReservationDetails());
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new RuntimeException("Reservation not found with id " + reservationId));
+        Reservation reservation = reservationRepository.findByIdAndUser(reservationId, loggedInUser)
+                .orElseThrow(() -> new RuntimeException("Reservation not found with id " + reservationId + " for the logged-in user"));
 
         Payment payment = getById(id);
         payment.setAmount(paymentDetails.getAmount());
@@ -98,47 +105,60 @@ public class PaymentService {
     }
 
     public Map<String, Object> getAnnualPaymentSummaryForYear(int year) {
-        List<Payment> payments = paymentRepository.findAll();
+        User loggedInUser = getLoggedInUser();
+        List<Payment> payments = paymentRepository.findByUser(loggedInUser);
         BigDecimal annualIncome = BigDecimal.ZERO;
+        BigDecimal totalIncomeAllYears = BigDecimal.ZERO; // Całkowity dochód ze wszystkich lat
         BigDecimal totalClimateFee = BigDecimal.ZERO;
         int totalGuests = 0;
+        int totalGuestsAllYears = 0; // Całkowita liczba gości ze wszystkich lat
         int totalReservations = 0;
         Map<Integer, BigDecimal> monthlyEarnings = IntStream.rangeClosed(1, 12)
                 .boxed()
-                .collect(Collectors.toMap(month -> month, month -> BigDecimal.ZERO.setScale(0, RoundingMode.HALF_EVEN)));
+                .collect(Collectors.toMap(month -> month, month -> BigDecimal.ZERO));
 
         for (Payment payment : payments) {
-            if (payment.getReservation().getCheck_in().getYear() == year) {
-                PaymentDTO paymentDTO = new PaymentDTO(payment);
-                int month = payment.getReservation().getCheck_in().getMonthValue();
+            PaymentDTO paymentDTO = new PaymentDTO(payment);
+            int paymentYear = payment.getReservation().getCheck_in().getYear();
+            int month = payment.getReservation().getCheck_in().getMonthValue();
+            // Akumulacja całkowitego dochodu z wszystkich lat, zaokrąglona do pełnych liczb
+            totalIncomeAllYears = totalIncomeAllYears.add(paymentDTO.getAmount()).setScale(0, RoundingMode.HALF_EVEN);
+            totalGuestsAllYears += payment.getReservation().getGuests_number(); // Akumulacja całkowitej liczby gości ze wszystkich lat
+
+            if (paymentYear == year) {
+                // Dochód roczny, zaokrąglony do pełnych liczb
                 annualIncome = annualIncome.add(paymentDTO.getAmount()).setScale(0, RoundingMode.HALF_EVEN);
                 totalClimateFee = totalClimateFee.add(paymentDTO.getClimateFee() != null ? paymentDTO.getClimateFee() : BigDecimal.ZERO).setScale(0, RoundingMode.HALF_EVEN);
                 totalGuests += payment.getReservation().getGuests_number();
                 totalReservations++;
-
+                // Miesięczne zarobki, aktualizacja z zaokrągleniem
                 monthlyEarnings.put(month, monthlyEarnings.get(month).add(paymentDTO.getAmount()).setScale(0, RoundingMode.HALF_EVEN));
             }
         }
 
-        BigDecimal incomeTax = annualIncome.multiply(BigDecimal.valueOf(0.08)).setScale(0, RoundingMode.HALF_EVEN); // 8% podatku dochodowego
-        BigDecimal vatTax = annualIncome.multiply(BigDecimal.valueOf(0.23)).setScale(0, RoundingMode.HALF_EVEN); // 23% VAT
-        BigDecimal netIncome = annualIncome.subtract(incomeTax).subtract(vatTax).setScale(0, RoundingMode.HALF_EVEN); // Dochód
-        String totalHouses = String.valueOf(houseRepository.count());
+        // Obliczanie podatków i dochodu netto, wszystkie wartości zaokrąglone do pełnych liczb
+        BigDecimal incomeTax = annualIncome.multiply(BigDecimal.valueOf(0.08)).setScale(0, RoundingMode.HALF_EVEN);
+        BigDecimal vatTax = annualIncome.multiply(BigDecimal.valueOf(0.23)).setScale(0, RoundingMode.HALF_EVEN);
+        BigDecimal netIncome = annualIncome.subtract(incomeTax).subtract(vatTax).setScale(0, RoundingMode.HALF_EVEN);
 
-        NumberFormat formatter = NumberFormat.getInstance(Locale.GERMAN); // Używa kropki jako separatora tysięcy
+        String totalHouses = String.valueOf(houseRepository.countByUser(loggedInUser));
+
+        NumberFormat formatter = NumberFormat.getInstance(Locale.GERMAN); // Formatowanie z użyciem separatora tysięcy (kropki)
 
         Map<String, Object> summary = new HashMap<>();
-        summary.put("totalIncome", formatter.format(annualIncome));
+        summary.put("annualIncome", formatter.format(annualIncome.intValue())); // Formatowanie zaokrąglonej wartości
+        summary.put("totalIncomeAllYears", formatter.format(totalIncomeAllYears.intValue())); // Formatowanie zaokrąglonej wartości
         summary.put("incomeTax", formatter.format(incomeTax));
         summary.put("vatTax", formatter.format(vatTax));
         summary.put("totalClimateFee", formatter.format(totalClimateFee));
         summary.put("totalGuests", formatter.format(totalGuests));
+        summary.put("totalGuestsAllYears", formatter.format(totalGuestsAllYears)); // Całkowita liczba gości ze wszystkich lat
         summary.put("totalReservations", formatter.format(totalReservations));
         summary.put("netIncome", formatter.format(netIncome));
         summary.put("monthlyEarnings", monthlyEarnings.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        e -> formatter.format(e.getValue())
+                        e -> formatter.format(e.getValue().intValue()) // Formatowanie zaokrąglonych wartości
                 )));
         summary.put("totalHouses", totalHouses);
 
@@ -146,7 +166,8 @@ public class PaymentService {
     }
 
     public Map<LocalDate, BigDecimal> calculateDailyAveragePrice(int year) {
-        List<Payment> payments = paymentRepository.findAll();
+        User loggedInUser = getLoggedInUser();
+        List<Payment> payments = paymentRepository.findByUser(loggedInUser);
         Map<LocalDate, List<BigDecimal>> dailyTotals = new HashMap<>();
 
         LocalDate startOfYear = LocalDate.of(year, 1, 1);
@@ -188,5 +209,23 @@ public class PaymentService {
         }
 
         return dailyAverage;
+    }
+
+    public List<Payment> sum() {
+        User loggedInUser = getLoggedInUser();
+        List<Payment> payments = paymentRepository.findByUser(loggedInUser);
+
+        BigDecimal annualIncome = BigDecimal.ZERO;
+        BigDecimal totalClimateFee = BigDecimal.ZERO;
+        int totalGuests = 0;
+        int totalReservations = 0;
+
+        for (Payment payment : payments) {
+            if (payment.getReservation().getCheck_in().getYear() == 2024) {
+                totalGuests += payment.getReservation().getGuests_number();
+            }
+        }
+
+        return payments;
     }
 }

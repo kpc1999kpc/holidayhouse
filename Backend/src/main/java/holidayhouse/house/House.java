@@ -1,8 +1,10 @@
 package holidayhouse.house;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import holidayhouse.reservation.Reservation;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import holidayhouse.secutiy.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,4 +27,9 @@ public class House {
 
     @OneToMany(mappedBy = "house")
     private Set<Reservation> reservations;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

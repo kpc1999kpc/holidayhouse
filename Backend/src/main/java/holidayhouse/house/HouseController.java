@@ -10,12 +10,8 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping("/houses")
 public class HouseController {
-    private final HouseService houseService;
-
     @Autowired
-    public HouseController(HouseService houseService){
-        this.houseService = houseService;
-    }
+    private HouseService houseService;
 
     @GetMapping
     public List<House> getAllHouses() {

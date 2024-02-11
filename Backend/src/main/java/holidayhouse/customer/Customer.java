@@ -1,8 +1,10 @@
 package holidayhouse.customer;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import holidayhouse.reservation.Reservation;
+import holidayhouse.secutiy.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +12,8 @@ import java.util.Set;
 
 @Entity
 @Table(name="customer")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -26,6 +29,11 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer")
     private Set<Reservation> reservations;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
 
 

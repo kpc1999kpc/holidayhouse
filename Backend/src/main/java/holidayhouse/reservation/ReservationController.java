@@ -15,12 +15,8 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @RequestMapping("/reservations")
 public class ReservationController {
-    private final ReservationService reservationService;
-
     @Autowired
-    public ReservationController(ReservationService reservationService){
-        this.reservationService = reservationService;
-    }
+    private ReservationService reservationService;
 
     @GetMapping
     public List<ReservationDTO> getAllReservations() {
@@ -41,7 +37,6 @@ public class ReservationController {
 
     @PostMapping
     public Reservation addReservation(@RequestBody ReservationDTO reservation) {
-
         return reservationService.addReservation(reservation);
     }
 

@@ -19,7 +19,11 @@ import { DataManager, Query } from '@syncfusion/ej2-data';
 const Payments = () => {
   const [payments, setPayments] = useState([]);
   const [reservationData, setReservationData] = useState([]);
-
+  
+  const getTokenHeader = () => {
+    const token = window.localStorage.getItem("token");
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
 
   // Konfiguracja kolumn dla tabeli płatności
   const paymentsGridColumns = [
@@ -77,8 +81,12 @@ const Payments = () => {
   // Hook useEffect do pobierania danych płatności
   useEffect(() => {
     // Pobieranie danych płatności
-    fetch('http://localhost:8081/payments')
-      .then(response => {
+    fetch('http://localhost:8081/payments', {
+      headers: {
+        'Content-Type': 'application/json',
+        ...getTokenHeader(),
+      }
+      }).then(response => {
         if (!response.ok) {
           throw new Error('Błąd sieciowy podczas pobierania danych');
         }
@@ -95,7 +103,12 @@ const Payments = () => {
   
     // Pobieranie danych rezerwacji dla listy rozwijanej
     Promise.all([
-      fetch('http://localhost:8081/reservations/details').then(response => response.json()),
+      fetch('http://localhost:8081/reservations/details', {
+        headers: {
+          'Content-Type': 'application/json',
+          ...getTokenHeader(),
+        }
+      }).then(response => response.json()),
     ])
     .then(([reservationData]) => {
       // Przetwarzanie i ustawianie danych domków
@@ -153,6 +166,7 @@ const Payments = () => {
               method,
               headers: {
                   'Content-Type': 'application/json',
+                  ...getTokenHeader(),
               },
               body: JSON.stringify(paymentData),
           });
@@ -162,7 +176,12 @@ const Payments = () => {
           }
 
           // Po pomyślnym dodaniu lub edycji, pobierz pełną listę płatności
-          const updatedPayments = await fetch('http://localhost:8081/payments').then(res => res.json());
+          const updatedPayments = await fetch('http://localhost:8081/payments', {
+            headers: {
+              'Content-Type': 'application/json',
+              ...getTokenHeader(), // Dodanie nagłówków z tokenem JWT
+            }
+          }).then(res => res.json());
           setPayments(updatedPayments);
       } catch (err) {
           setError(err.message);
@@ -174,6 +193,10 @@ const Payments = () => {
       try {
           const response = await fetch(`http://localhost:8081/payments/${paymentId}`, {
               method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                ...getTokenHeader(), // Dodanie nagłówków z tokenem JWT
+              },
           });
 
           if (!response.ok) {
@@ -192,7 +215,7 @@ const Payments = () => {
     // Obsługa zakończenia akcji w komponencie tabeli
     if (args.requestType === 'save' || args.requestType === 'cancel') {
       const newColumns = columns.map(col => {
-        if (col.field === 'climateFee') {
+        if (col.field === 'climateFee' || col.field === 'dailyRate') {
           return { ...col, visible: true };
         }
         return col;
@@ -209,7 +232,7 @@ const Payments = () => {
  const handleActionBegin = (args) => {
   if (args.requestType === 'beginEdit' || args.requestType === 'add') {
     const newColumns = columns.map(col => {
-      if (col.field === 'climateFee') {
+      if (col.field === 'climateFee' || col.field === 'dailyRate') {
         return { ...col, visible: false };
       }
       return col;
@@ -218,7 +241,6 @@ const Payments = () => {
 
   }
 };
-
 
   // Renderowanie komponentu
   if (loading) {

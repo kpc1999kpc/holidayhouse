@@ -22,10 +22,16 @@ const Houses = () => {
 
   const selectionsettings = { type: 'None' };
   const toolbarOptions = ['Add', 'Edit', 'Delete', 'Search'];
-  const editing = { allowDeleting: true, allowEditing: true, allowAdding: true, mode: 'Dialog', dialgog: {} };
+  const editing = { allowDeleting: true, allowEditing: true, allowAdding: true, mode: 'Dialog', dialog: {} };
+
+  const getTokenHeader = () => {
+    const token = window.localStorage.getItem("token");
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
 
   useEffect(() => {
-    fetch('http://localhost:8081/houses')
+    setLoading(true);
+    fetch('http://localhost:8081/houses', { headers: getTokenHeader() })
       .then(response => {
         if (!response.ok) {
           throw new Error('Błąd sieciowy podczas pobierania danych');
@@ -44,6 +50,11 @@ const Houses = () => {
 
   const handleActionComplete = async (args) => {
     const houseData = args.data;
+    const headers = {
+      'Content-Type': 'application/json',
+      ...getTokenHeader()
+    };
+
     if (args.requestType === 'save') {
       let url = 'http://localhost:8081/houses';
       let method = 'POST';
@@ -55,17 +66,15 @@ const Houses = () => {
       try {
         const response = await fetch(url, {
           method,
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers,
           body: JSON.stringify(houseData),
         });
 
         if (response.ok) {
           // Po pomyślnym dodaniu lub edycji, pobierz pełną listę domków
-          fetch('http://localhost:8081/houses')
-            .then(response => response.json())
-            .then(data => setHouses(data));
+          const updatedHouses = await fetch('http://localhost:8081/houses', { headers: getTokenHeader() })
+            .then(response => response.json());
+          setHouses(updatedHouses);
         } else {
           throw new Error('Błąd sieciowy podczas operacji');
         }
@@ -79,6 +88,7 @@ const Houses = () => {
       try {
         const response = await fetch(`http://localhost:8081/houses/${houseId}`, {
           method: 'DELETE',
+          headers: getTokenHeader(),
         });
 
         if (response.ok) {
@@ -102,13 +112,13 @@ const Houses = () => {
 
   const handleActionBegin = (args) => {
     if (args.requestType === 'beginEdit' || args.requestType === 'add') {
-        setTimeout(() => {
-            if (document.querySelector('.e-dlg-header')) {
-                document.querySelector('.e-dlg-header').textContent = 'Szczegóły';
-            }
-        }, 0);
+      setTimeout(() => {
+        if (document.querySelector('.e-dlg-header')) {
+          document.querySelector('.e-dlg-header').textContent = 'Szczegóły';
+        }
+      }, 0);
     }
-};
+  };
 
   return (
       <GridComponent

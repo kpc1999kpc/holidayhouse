@@ -1,6 +1,7 @@
 package holidayhouse.customer;
 
-import lombok.NonNull;
+import holidayhouse.secutiy.demo.AbstractService;
+import holidayhouse.secutiy.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,24 +12,24 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-public class CustomerService {
-    private final CustomerRepository customerRepository;
-
+public class CustomerService extends AbstractService {
     @Autowired
-    public CustomerService(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
+    private CustomerRepository customerRepository;
 
     public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+        User user = getLoggedInUser();
+        return customerRepository.findByUser(user);
     }
 
     public Customer getById(Long id) {
-        return customerRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Customer not found with id " + id));
+        User loggedInUser = getLoggedInUser();
+        return  customerRepository.findByIdAndUser(id, loggedInUser)
+                .orElseThrow(() -> new NoSuchElementException("Customer not found with id " + id + " for the logged-in user"));
     }
 
     public List<Map<String, Object>> getAllCustomerFullNames() {
-        return customerRepository.findAll().stream()
+        User loggedInUser = getLoggedInUser();
+        return customerRepository.findByUser(loggedInUser).stream()
                 .map(customer -> {
                     Map<String, Object> customerNameMap = new HashMap<>();
                     String fullName = customer.getSurname() + " " + customer.getName();
@@ -40,19 +41,28 @@ public class CustomerService {
     }
 
     public Customer addCustomer(Customer customer) {
+        User loggedInUser = getLoggedInUser();
+        customer.setUser(loggedInUser); // Przypisz zalogowanego użytkownika do klienta
         return customerRepository.save(customer);
     }
 
     public Customer updateCustomer(Long id, Customer customerDetails) {
-        Customer customer = getById(id);
+        Customer customer = getById(id); // Pobiera klienta i sprawdza, czy należy do zalogowanego użytkownika
+
+        // Aktualizacja szczegółów klienta
         customer.setName(customerDetails.getName());
         customer.setSurname(customerDetails.getSurname());
         customer.setPhone_number(customerDetails.getPhone_number());
         customer.setComment(customerDetails.getComment());
+
+        // Zapisanie zaktualizowanego klienta
         return customerRepository.save(customer);
     }
 
+
     public void delete(Long id) {
-        customerRepository.deleteById(id);
+        Customer customer = getById(id);
+        customerRepository.delete(customer);
     }
+
 }

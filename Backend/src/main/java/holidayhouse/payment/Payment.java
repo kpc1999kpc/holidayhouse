@@ -1,6 +1,8 @@
 package holidayhouse.payment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import holidayhouse.reservation.Reservation;
+import holidayhouse.secutiy.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +26,11 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
 
 

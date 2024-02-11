@@ -1,6 +1,7 @@
 package holidayhouse.payment;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -13,12 +14,8 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @RequestMapping("/payments")
 public class PaymentController {
-    private final PaymentService paymentService;
-
     @Autowired
-    public PaymentController(PaymentService paymentService){
-        this.paymentService = paymentService;
-    }
+    private PaymentService paymentService;
 
     @GetMapping
     public List<PaymentDTO> getAllPayments() {
@@ -55,6 +52,11 @@ public class PaymentController {
     @GetMapping("/daily-average/{year}")
     public Map<LocalDate, BigDecimal> getDailyAveragePrice(@PathVariable int year) {
         return paymentService.calculateDailyAveragePrice(year);
+    }
+
+    @GetMapping("/sum")
+    public List<Payment> sum() {
+        return paymentService.sum();
     }
 }
 

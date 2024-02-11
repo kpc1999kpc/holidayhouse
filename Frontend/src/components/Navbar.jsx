@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { HiMenu } from 'react-icons/hi'
 import { FiShoppingCart } from 'react-icons/fi'
 import { BsChatLeft } from 'react-icons/bs'
-import { RiNotification3Line } from 'react-icons/ri'
+import { IoLogOutOutline } from "react-icons/io5";
 import { Tooltip, TooltipComponent } from '@syncfusion/ej2-react-popups'
 import {Cart, Chat, Notification} from '.'
 import { useStateContext } from '../contexts/ContextProvider'
@@ -26,6 +26,11 @@ const NavButton = ({title, customFunc, icon, color, dotColor}) => (
     </button>
   </TooltipComponent>
 )
+
+const logout = () => {
+  window.localStorage.removeItem("token");
+  window.location.reload();
+};
 
 const Navbar = () => {
   const { activeMenu, setActiveMenu, isClicked,
@@ -72,24 +77,10 @@ const Navbar = () => {
     </div>
     <div className='flex'>
       <NavButton
-        title='Cart'
-        customFunc={() => handleClick('cart')}
+        title='Wyloguj'
+        customFunc={logout}
         color={ currentColor }
-        icon={<FiShoppingCart />} />
-      <NavButton
-        title='Chat'
-        dotColor='#4ADE80'
-        customFunc={() => handleClick('chat')}
-        color={ currentColor }
-        icon={<BsChatLeft />} />
-      <NavButton
-        title='Notification'
-        customFunc={() => handleClick('notification')}
-        color={ currentColor }
-        icon={<RiNotification3Line />} />
-        {isClicked.cart && <Cart />}
-        {isClicked.chat && <Chat />}
-        {isClicked.notification && <Notification />}
+        icon={<IoLogOutOutline size={25}/>} />
       </div>
     </div>
   )

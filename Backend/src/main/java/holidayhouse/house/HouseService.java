@@ -1,5 +1,7 @@
 package holidayhouse.house;
 
+import holidayhouse.secutiy.demo.AbstractService;
+import holidayhouse.secutiy.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,23 +12,24 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-public class HouseService {
-    private final HouseRepository houseRepository;
-
+public class HouseService extends AbstractService {
     @Autowired
-    public HouseService(HouseRepository houseRepository) {
-        this.houseRepository = houseRepository;
-    }
+    private HouseRepository houseRepository;
 
     public List<House> getAllHouses() {
-        return houseRepository.findAll();
+        User user = getLoggedInUser();
+        return houseRepository.findByUser(user);
     }
 
     public House getById(Long id) {
-        return houseRepository.findById(id).orElseThrow(() -> new NoSuchElementException("House not found with id " + id));
+        User loggedInUser = getLoggedInUser();
+        return  houseRepository.findByIdAndUser(id, loggedInUser)
+                .orElseThrow(() -> new NoSuchElementException("House not found with id " + id + " for the logged-in user"));
     }
 
     public House addHouse(House house) {
+        User loggedInUser = getLoggedInUser();
+        house.setUser(loggedInUser);
         return houseRepository.save(house);
     }
 
@@ -40,11 +43,13 @@ public class HouseService {
     }
 
     public void delete(Long id) {
-        houseRepository.deleteById(id);
+        House house = getById(id);
+        houseRepository.delete(house);
     }
 
     public List<Map<String, String>> getAllHouseNames() {
-        return houseRepository.findAll().stream()
+        User loggedInUser = getLoggedInUser();
+        return houseRepository.findByUser(loggedInUser).stream()
                 .map(house -> {
                     Map<String, String> houseNameMap = new HashMap<>();
                     houseNameMap.put("name", house.getName().trim()); // Usuń białe znaki na początku i końcu

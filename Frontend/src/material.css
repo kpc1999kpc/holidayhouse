@@ -76459,6 +76459,7 @@ div > .e-pv-bookmark-icon.e-pv-icon.e-right {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   margin-bottom: 3px;
   min-height: 42px;
+  background-color: #ffffff;
 }
 .e-schedule .e-schedule-toolbar .e-active-view .e-tbar-btn-text,
 .e-schedule .e-schedule-toolbar .e-active-view .e-icons {
@@ -76472,20 +76473,24 @@ div > .e-pv-bookmark-icon.e-pv-icon.e-right {
 .e-schedule .e-schedule-toolbar .e-toolbar-items.e-tbar-pos {
   height: 42px;
   min-height: 42px;
+  background-color: #ffffff;
 }
 .e-schedule .e-schedule-toolbar .e-toolbar-items.e-tbar-pos .e-toolbar-right .e-toolbar-item .e-tbar-btn {
   border: none;
-  border-radius: 0;
+  border-radius: 1px solid rgba(0, 0, 0, 0.12);
 }
 .e-schedule .e-schedule-toolbar .e-toolbar-items.e-tbar-pos .e-toolbar-right .e-toolbar-item.e-active-view .e-tbar-btn {
   border: none;
+  margin-top: 24px;
 }
 .e-schedule .e-schedule-toolbar .e-toolbar-items.e-tbar-pos > div {
   height: inherit;
+  margin-top: 10px;
+  margin-left: 6px;
+  margin-right: 6px;
 }
 .e-schedule .e-schedule-toolbar .e-toolbar-items .e-tbar-btn.e-btn.e-tbtn-txt .e-icons.e-icon-right.e-btn-icon.e-icon-down-arrow {
   font-size: 10px;
-  margin-top: 0;
 }
 .e-schedule .e-schedule-toolbar .e-toolbar-items .e-toolbar-left .e-tbar-btn.e-icon-btn:focus, .e-schedule .e-schedule-toolbar .e-toolbar-items .e-toolbar-left .e-tbar-btn.e-icon-btn:hover {
   border-radius: 100%;

@@ -21,10 +21,16 @@ const Customers = () => {
 
   const selectionsettings = { type: 'None' };
   const toolbarOptions = ['Add', 'Edit', 'Delete', 'Search'];
-  const editing = { allowDeleting: true, allowEditing: true, allowAdding: true, mode: 'Dialog', dialgog: {} };
+  const editing = { allowDeleting: true, allowEditing: true, allowAdding: true, mode: 'Dialog', dialog: {} };
+
+  const getTokenHeader = () => {
+    const token = window.localStorage.getItem("token");
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
 
   useEffect(() => {
-    fetch('http://localhost:8081/customers')
+    setLoading(true);
+    fetch('http://localhost:8081/customers', { headers: getTokenHeader() })
       .then(response => {
         if (!response.ok) {
           throw new Error('Błąd sieciowy podczas pobierania danych');
@@ -43,6 +49,11 @@ const Customers = () => {
   
   const handleActionComplete = async (args) => {
     const customerData = args.data;
+    const headers = {
+      'Content-Type': 'application/json',
+      ...getTokenHeader()
+    };
+  
     if (args.requestType === 'save') {
       let url = 'http://localhost:8081/customers';
       let method = 'POST';
@@ -50,21 +61,19 @@ const Customers = () => {
         url = `http://localhost:8081/customers/${customerData.id}`;
         method = 'PUT';
       }
-
+  
       try {
         const response = await fetch(url, {
           method,
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers,
           body: JSON.stringify(customerData),
         });
-
+  
         if (response.ok) {
           // Po pomyślnym dodaniu lub edycji, pobierz pełną listę klientów
-          fetch('http://localhost:8081/customers')
-            .then(response => response.json())
-            .then(data => setCustomers(data));
+          const updatedCustomers = await fetch('http://localhost:8081/customers', { headers: getTokenHeader() })
+            .then(response => response.json());
+          setCustomers(updatedCustomers);
         } else {
           throw new Error('Błąd sieciowy podczas operacji');
         }
@@ -74,12 +83,13 @@ const Customers = () => {
     } else if (args.requestType === 'delete') {
       const deletedCustomer = args.data[0];
       const customerId = deletedCustomer.id;
-
+  
       try {
         const response = await fetch(`http://localhost:8081/customers/${customerId}`, {
           method: 'DELETE',
+          headers: getTokenHeader(),
         });
-
+  
         if (response.ok) {
           setCustomers(customers.filter(customer => customer.id !== customerId));
         } else {
@@ -89,7 +99,7 @@ const Customers = () => {
         setError(err.message);
       }
     }
-  };  
+  };   
 
   if (loading) {
     return <LoadingSpinner />;

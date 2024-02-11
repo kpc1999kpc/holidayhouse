@@ -7,9 +7,21 @@ const Calendar = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const getTokenHeader = () => {
+    const token = window.localStorage.getItem("token");
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
+
   useEffect(() => {
-    const fetchHouses = fetch('http://localhost:8081/houses').then(res => res.json());
-    const fetchReservations = fetch('http://localhost:8081/reservations').then(res => res.json());
+    const fetchOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...getTokenHeader(),
+      }
+    };
+
+    const fetchHouses = fetch('http://localhost:8081/houses', fetchOptions).then(res => res.json());
+    const fetchReservations = fetch('http://localhost:8081/reservations', fetchOptions).then(res => res.json());
 
     Promise.all([fetchHouses, fetchReservations])
       .then(([housesData, reservationsData]) => {
